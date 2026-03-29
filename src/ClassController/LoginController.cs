@@ -1,0 +1,44 @@
+﻿namespace ClassController
+{
+    using ClassController.Abstractions;
+
+    /// <summary>
+    /// Controller for Login operations.
+    /// </summary>
+    public class LoginController
+    {
+        private readonly IuserController userController;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="LoginController"/> class.
+        /// </summary>
+        /// <param name="userController">The user controller.</param>
+        public LoginController(IuserController userController) 
+        {
+            this.userController = userController;
+        }
+
+        /// <summary>
+        /// Logins the specified userName.
+        /// </summary>
+        /// <param name="userName">The userName.</param>
+        /// <param name="password">The password.</param>
+        /// <returns>True if th elogin us successful; otherwise, false.</returns>
+        public bool Login(string userName, string password)
+        {
+            return this.userController.Login(userName,password);
+        }
+
+        /// <summary>
+        /// Registers the specified userName.
+        /// </summary>
+        /// <param name="userName">The userName.</param>
+        /// <param name="password">The password.</param>
+        /// <returns>True if the registration is successful; otherwise, false.</returns>
+        public bool Register(string userName, string password)
+        {
+            return this.userController.Register(userName, password);
+        }
+
+    }
+}
