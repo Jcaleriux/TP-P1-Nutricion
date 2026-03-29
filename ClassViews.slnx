@@ -1,6 +1,7 @@
 <Solution>
   <Folder Name="/src/">
     <Project Path="src/ClassController/ClassController.csproj" Id="0ca59035-66f8-4728-90b8-6d674d726d35" />
+    <Project Path="src/ClassModels/ClassModels.csproj" Id="4b1593b4-edc7-44c5-b900-a803a4424c10" />
     <Project Path="src/ClassViews/ClassViews.csproj" />
   </Folder>
 </Solution>
