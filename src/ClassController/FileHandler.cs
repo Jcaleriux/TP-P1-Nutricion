@@ -26,7 +26,7 @@
         /// <returns>
         /// The loaded data.
         /// </returns>
-        public List<T> LoadData(string filePath)
+        public List<T> LoadData()
         {
             if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
             { 
@@ -39,8 +39,8 @@
             for (var i = 1; i< lines.Length; i++)
             {
                 var lineElements = lines[i].Split(',');
-                var elemet = Activator.CreateInstance(typeof(T), lineElements);
-                data.Add((T)elemet);
+                var element = Activator.CreateInstance(typeof(T), lineElements);
+                data.Add((T)element);
             }
 
             return data;

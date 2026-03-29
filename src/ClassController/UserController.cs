@@ -18,7 +18,7 @@
         public UserController(IDataHandler<User> dataHandler)
         {
             this.dataHandler = dataHandler;
-            this.users = new List<User>();
+            this.users = dataHandler.LoadData();
         }
 
         /// <summary>

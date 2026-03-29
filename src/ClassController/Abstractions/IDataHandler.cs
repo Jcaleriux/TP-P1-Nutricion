@@ -22,6 +22,6 @@
         /// <typeparam name="T"></typeparam>
         /// <param name="filePath">The file path.</param>
         /// <returns>The loaded data.</returns>
-        public List<T> LoadData(string filePath);
+        public List<T> LoadData();
     }
 }
