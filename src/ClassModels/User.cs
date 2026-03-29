@@ -1,8 +1,6 @@
 ﻿namespace ClassModels
 {
-
-
-    /// <summary>
+        /// <summary>
     /// Model to represetn the user of the system.
     /// </summary>
     public class User
@@ -18,6 +16,15 @@
             this.Password = Password;
         }
 
+        /// <summary>
+        /// Initializes a new instance of the <see cref="User"/> class.
+        /// </summary>
+        /// <param name="userData">The user data.</param>
+        public User(string[] userData)
+        {
+            this.UserName = userData[0];
+            this.Password = userData[1];
+        }
 
         /// <summary>
         /// Gets or sets the name of the user.

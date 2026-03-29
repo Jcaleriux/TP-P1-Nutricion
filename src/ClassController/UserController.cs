@@ -2,28 +2,22 @@
 {
     using ClassController.Abstractions;
     using ClassModels;
-    using System.Security.Cryptography.X509Certificates;
 
     /// <summary>
     /// Implements the user-related operations
     /// </summary>
     public class UserController : IuserController
     {
-
         private readonly List<User> users;
-        private readonly String userFilePath;
         private readonly IDataHandler<User> dataHandler;
-
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserController"/> class.
         /// </summary>
         /// <param name="dataHandler">The data handler.</param>
-        /// <param name="userFilePath">The user file path.</param>
-        public UserController(IDataHandler<User> dataHandler, string userFilePath)
+        public UserController(IDataHandler<User> dataHandler)
         {
             this.dataHandler = dataHandler;
-            this.userFilePath = userFilePath;
             this.users = new List<User>();
         }
 
@@ -37,8 +31,8 @@
         /// </returns>
         public bool Login(string userName, string password)
         {
-            if (this.users != null && this.ExistsUser(userName,password)
-            { 
+            if (this.users != null && this.ExistsUser(userName, password))
+            {
                 return true;
             }
             return false;
@@ -54,17 +48,18 @@
         /// </returns>
         public bool Register(string userName, string password)
         {
-            if (this.users != null) 
+            if (this.users != null)
             {
                 if (this.ExistsUser(userName, password))
                 {
                     return false;
                 }
+
                 this.users.Add(new User(userName, password));
-                this.dataHandler.SaveData(this.users, this.userFilePath);
-                return true;
+                var result = this.dataHandler.SaveData(this.users);
+                return result;
             }
-            return false
+            return false;
         }
 
         private bool ExistsUser(string userName, string password)
@@ -79,4 +74,5 @@
             return false;
 
         }
+    } 
 }

@@ -29,4 +29,9 @@
     <Folder Include="ClassViews\" />
   </ItemGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\ClassController\ClassController.csproj" />
+    <ProjectReference Include="..\ClassModels\ClassModels.csproj" />
+  </ItemGroup>
+
 </Project>

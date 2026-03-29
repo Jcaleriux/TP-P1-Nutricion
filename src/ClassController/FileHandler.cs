@@ -8,6 +8,17 @@
     /// </summary>
     public class FileHandler<T> : IDataHandler<T>
     {
+        private readonly string filePath;
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="FileHandler{T}"/> class.
+        /// </summary>
+        /// <param name="filePath">The file path.</param>
+        public FileHandler(string filePath)
+        {
+            this.filePath = filePath;
+        }
+
         /// <summary>
         /// Loads the data.
         /// </summary>
@@ -15,10 +26,24 @@
         /// <returns>
         /// The loaded data.
         /// </returns>
-        /// <exception cref="NotImplementedException"></exception>
         public List<T> LoadData(string filePath)
         {
-            return new List<T>();
+            if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
+            { 
+                throw new FileNotFoundException($"The file '{filePath}' was not found.");
+            }
+
+            var data = new List<T>();
+            var lines = File.ReadAllLines(filePath);
+
+            for (var i = 1; i< lines.Length; i++)
+            {
+                var lineElements = lines[i].Split(',');
+                var elemet = Activator.CreateInstance(typeof(T), lineElements);
+                data.Add((T)elemet);
+            }
+
+            return data;
         }
 
         /// <summary>
@@ -29,8 +54,7 @@
         /// <returns>
         /// True if the data is saved successfully; otherwise, false.
         /// </returns>
-        /// <exception cref="NotImplementedException"></exception>
-        public bool SaveData(string filePath, List<T> data)
+        public bool SaveData(List<T> data)
         {
             return true;
         }

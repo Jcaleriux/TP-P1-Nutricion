@@ -14,7 +14,7 @@
         /// <param name="filePath">The file path.</param>
         /// <param name="data">The data.</param>
         /// <returns>True if the data is saved successfully; otherwise, false.</returns>
-        public bool SaveData(string filePath, List<T> data);
+        public bool SaveData(List<T> data);
 
         /// <summary>
         /// Loads the data.
