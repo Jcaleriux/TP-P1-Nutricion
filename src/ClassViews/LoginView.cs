@@ -3,13 +3,13 @@
     using ClassController;
 
     /// <summary>
-    /// Viwe for the login form.
+    /// View for the login form.
     /// </summary>
     /// <seealso cref="System.Windows.Forms.Form" />
     public partial class LoginView : Form
     {
         private LoginController loginController;
-        private string userName => this.txtUser.Text;
+        private string email => this.txtEmail.Text;
         private string password => this.txtPassword.Text;
 
         /// <summary>
@@ -24,7 +24,7 @@
 
         private void BtnLogin_Click(object sender, EventArgs e)
         {
-            var result = this.loginController.Login(this.userName, this.password);
+            var result = this.loginController.Login(this.email, this.password);
 
             if (result)
             {
@@ -38,6 +38,12 @@
             }
         }
         private void btnRegister_Click(object sender, EventArgs e)
+        {
+            var registerView = new RegisterView(this.loginController);
+            registerView.ShowDialog();
+        }
+
+        private void txtPassword_TextChanged(object sender, EventArgs e)
         {
 
         }

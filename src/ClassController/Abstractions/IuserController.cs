@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Text;
-
-namespace ClassController.Abstractions
+﻿namespace ClassController.Abstractions
 {
+    using ClassModels;
+
     /// <summary>
     /// An interface to handle user-related operations.
     /// </summary>
@@ -18,13 +16,13 @@ namespace ClassController.Abstractions
         public bool Login(string username, string password);
 
         /// <summary>
-        /// Registers the specified username.
+        /// Registers the specified user.
         /// </summary>
-        /// <param name="username">The username.</param>
-        /// <param name="password">The password.</param>
-        /// <returns>True if the login is successful; otherwise, false.</returns>
-
-        public bool Register(string username, string password);
+        /// <param name="user">The user.</param>
+        /// <returns>
+        /// True if the register is successful; otherwise, false.
+        /// </returns>
+        public bool Register(User user);
 
     }
 }

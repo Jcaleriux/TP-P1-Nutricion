@@ -1,6 +1,7 @@
 ﻿namespace ClassController
 {
     using ClassController.Abstractions;
+    using ClassModels;
     using System.Collections.Generic;
 
     /// <summary>
@@ -39,7 +40,7 @@
             for (var i = 1; i< lines.Length; i++)
             {
                 var lineElements = lines[i].Split(',');
-                var element = Activator.CreateInstance(typeof(T), lineElements);
+                var element = Activator.CreateInstance(typeof(T), new object[] { lineElements });
                 data.Add((T)element);
             }
 
@@ -56,6 +57,21 @@
         /// </returns>
         public bool SaveData(List<T> data)
         {
+            var lines = new List<string>();
+            lines.Add("UserId,Name,Email,Password,Goal,ActivityLevel,WeightKg,HeightCm,Age,Sex,DietType");
+
+            foreach (var item in data)
+            {
+                var user = item as User;
+
+                if (user != null)
+                {
+                    lines.Add(
+                        $"{user.UserId},{user.Name},{user.Email},{user.Password},{user.Goal},{user.ActivityLevel},{user.WeightKg},{user.HeightCm},{user.Age},{user.Sex},{user.DietType}");
+                }
+            }
+
+            File.WriteAllLines(filePath, lines);
             return true;
         }
     }

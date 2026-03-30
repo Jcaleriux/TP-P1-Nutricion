@@ -1,6 +1,7 @@
 ﻿namespace ClassController
 {
     using ClassController.Abstractions;
+    using ClassModels;
 
     /// <summary>
     /// Controller for Login operations.
@@ -35,9 +36,9 @@
         /// <param name="userName">The userName.</param>
         /// <param name="password">The password.</param>
         /// <returns>True if the registration is successful; otherwise, false.</returns>
-        public bool Register(string userName, string password)
+        public bool Register(User user)
         {
-            return this.userController.Register(userName, password);
+            return this.userController.Register(user);
         }
 
     }
