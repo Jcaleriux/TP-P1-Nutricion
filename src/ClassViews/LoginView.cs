@@ -34,18 +34,13 @@
             }
             else
             {
-                MessageBox.Show("Login failed. Please check your username and password.");
+                MessageBox.Show("Login failed. Please check your email and password.");
             }
         }
         private void btnRegister_Click(object sender, EventArgs e)
         {
             var registerView = new RegisterView(this.loginController);
             registerView.ShowDialog();
-        }
-
-        private void txtPassword_TextChanged(object sender, EventArgs e)
-        {
-
         }
     }
 }
