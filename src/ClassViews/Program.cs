@@ -15,15 +15,19 @@ namespace ClassViews
             // To customize application configuration such as set high DPI settings or default font,
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            var loginController = LoadServices();
-            Application.Run(new LoginView(loginController));
+            var (loginController, productController) = LoadServices();
+            Application.Run(new LoginView(loginController, productController));
         }
-        private static LoginController LoadServices()
+        private static (LoginController LoginController, ProductController ProductController )LoadServices()
         {
-            var fileHandler = new FileHandler<User>(ConfigurationItems.UserFilePath);
-            var userController = new UserController(fileHandler);
+            var userFileHandler = new UserFileHandler(ConfigurationItems.UserFilePath);
+            var userController = new UserController(userFileHandler);
             var loginController = new LoginController(userController);
-            return loginController;
+
+            var productFileHandler = new ProductFileHandler(ConfigurationItems.ProductsFilePath);
+            var productController = new ProductController(productFileHandler);
+
+            return (loginController, productController);
         }
     }
 }
