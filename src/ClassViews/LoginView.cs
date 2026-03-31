@@ -10,28 +10,32 @@
     public partial class LoginView : Form
     {
         private LoginController loginController;
-        private string email => this.txtEmail.Text;
-        private string password => this.txtPassword.Text;
+        private ProductController productController;
+
+        private string Email => this.txtEmail.Text;
+        private string Password => this.txtPassword.Text;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LoginView"/> class.
         /// </summary>
         /// <param name="loginController">The login controller.</param>
-        public LoginView(LoginController loginController)
+        public LoginView(LoginController loginController, ProductController productController)
         {
             this.InitializeComponent();
             this.loginController = loginController;
+            this.productController = productController;
         }
 
         private void BtnLogin_Click(object sender, EventArgs e)
         {
-            var authenticatedUser = this.loginController.Login(this.Email, this.Password);
+            var result = this.loginController.Login(this.Email, this.Password);
 
             if (authenticatedUser is not null)
             {
                 MessageBox.Show("Login successful! Welcome!");
-                var principalForm = new MainForm(this.productController, authenticatedUser);
+                var principalForm = new MainForm(this.productController);
                 principalForm.Show();
+                this.Hide();
             }
             else
             {

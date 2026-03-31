@@ -6,7 +6,7 @@
     /// <summary>
     /// Implements the user-related operations
     /// </summary>
-    public class UserController : IuserController
+    public class UserController : IUserController
     {
         private readonly List<User> users;
         private readonly IDataHandler<User> dataHandler;

@@ -8,13 +8,13 @@
     /// </summary>
     public class LoginController
     {
-        private readonly IuserController userController;
+        private readonly IUserController userController;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="LoginController"/> class.
         /// </summary>
         /// <param name="userController">The user controller.</param>
-        public LoginController(IuserController userController) 
+        public LoginController(IUserController userController) 
         {
             this.userController = userController;
         }

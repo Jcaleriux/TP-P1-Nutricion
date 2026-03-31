@@ -25,10 +25,11 @@ namespace ClassViews
 
         private void btnManageProducts_Click(object sender, EventArgs e)
         {
-            InitializeComponent();
+            this.InitializeComponent();
+            this.productController = productController;
         }
 
-        private void MainForm_Load(object sender, EventArgs e)
+        private void btnManageProducts_Click(object sender, EventArgs e)
         {
             this.lblWelcome.Text = $"Welcome {this.currentUser.Name}";
         }

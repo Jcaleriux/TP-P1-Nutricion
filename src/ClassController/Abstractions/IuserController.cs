@@ -5,7 +5,7 @@
     /// <summary>
     /// An interface to handle user-related operations.
     /// </summary>
-    public interface IuserController
+    public interface IUserController
     {
         /// <summary>
         /// Logins the specified username.
