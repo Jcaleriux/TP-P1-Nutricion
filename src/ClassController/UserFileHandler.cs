@@ -5,9 +5,9 @@
     using System.Collections.Generic;
 
     /// <summary>
-    /// Class in charge of handling the data operation by files.
+    /// Class in charge of handling the user data operation by files.
     /// </summary>
-    public class FileHandler<T> : IDataHandler<T>
+    public class UserFileHandler : IDataHandler<User>
     {
         private readonly string filePath;
 
@@ -15,47 +15,47 @@
         /// Initializes a new instance of the <see cref="FileHandler{T}"/> class.
         /// </summary>
         /// <param name="filePath">The file path.</param>
-        public FileHandler(string filePath)
+        public UserFileHandler(string filePath)
         {
             this.filePath = filePath;
         }
 
         /// <summary>
-        /// Loads the data.
+        /// Loads user the data.
         /// </summary>
         /// <param name="filePath">The file path.</param>
         /// <returns>
         /// The loaded data.
         /// </returns>
-        public List<T> LoadData()
+        public List<User> LoadData()
         {
             if (string.IsNullOrEmpty(filePath) || !File.Exists(filePath))
             { 
                 throw new FileNotFoundException($"The file '{filePath}' was not found.");
             }
 
-            var data = new List<T>();
+            var data = new List<User>();
             var lines = File.ReadAllLines(filePath);
 
             for (var i = 1; i< lines.Length; i++)
             {
                 var lineElements = lines[i].Split(',');
-                var element = Activator.CreateInstance(typeof(T), new object[] { lineElements });
-                data.Add((T)element);
+                var element = Activator.CreateInstance(typeof(User), new object[] { lineElements });
+                data.Add((User)element);
             }
 
             return data;
         }
 
         /// <summary>
-        /// Saves the data.
+        /// Saves User the data.
         /// </summary>
         /// <param name="filePath">The file path.</param>
         /// <param name="data">The data.</param>
         /// <returns>
         /// True if the data is saved successfully; otherwise, false.
         /// </returns>
-        public bool SaveData(List<T> data)
+        public bool SaveData(List<User> data)
         {
             var lines = new List<string>();
             lines.Add("UserId,Name,Email,Password,Goal,ActivityLevel,WeightKg,HeightCm,Age,Sex,DietType");
