@@ -10,6 +10,10 @@
     public partial class RegisterView : Form
     {
         private LoginController loginController;
+        /// <summary>
+        /// Initializes a new instance of the <see cref="RegisterView"/> class.
+        /// </summary>
+        /// <param name="loginController">The login controller.</param>
         public RegisterView(LoginController loginController)
         {
             InitializeComponent();

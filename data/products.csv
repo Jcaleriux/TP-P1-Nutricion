@@ -4,3 +4,48 @@ ProductId,Name,Calories,Protein,Carbs,Fat,Unit
 3,Huevo,155,13,1.1,11,100g
 4,Avena,389,16.9,66.3,6.9,100g
 5,Banana,89,1.1,22.8,0.3,100g
+6,Manzana,52,0.3,14,0.2,100g
+7,Pera,57,0.4,15,0.1,90g
+8,Naranja,47,0.9,12,0.1,100g
+9,Fresa,32,0.7,7.7,0.3,100g
+10,Piña,50,0.5,13,0.1,100g
+11,Papaya,43,0.5,11,0.3,100g
+12,Mango,60,0.8,15,0.4,100g
+13,Uvas,69,0.7,18,0.2,100g
+14,Sandia,30,0.6,7.6,0.2,100g
+15,Aguacate,160,2,8.5,14.7,100g
+16,Brocoli,34,2.8,7,0.4,100g
+17,Zanahoria,41,0.9,10,0.2,100g
+18,Tomate,18,0.9,3.9,0.2,100g
+19,Lechuga,15,1.4,2.9,0.2,100g
+20,Espinaca,23,2.9,3.6,0.4,100g
+21,Pepino,15,0.7,3.6,0.1,100g
+22,Cebolla,40,1.1,9.3,0.1,100g
+23,Pimiento rojo,31,1,6,0.3,100g
+24,Papa cocida,87,1.9,20.1,0.1,100g
+25,Camote,86,1.6,20.1,0.1,100g
+26,Yuca cocida,160,1.4,38.1,0.3,100g
+27,Frijoles negros cocidos,132,8.9,23.7,0.5,100g
+28,Lentejas cocidas,116,9,20.1,0.4,100g
+29,Garbanzos cocidos,164,8.9,27.4,2.6,100g
+30,Tofu,76,8,1.9,4.8,100g
+31,Queso mozzarella,280,28,3.1,17,100g
+32,Queso cheddar,403,25,1.3,33,100g
+33,Yogur griego natural,97,9,3.9,5,100g
+34,Leche entera,61,3.2,4.8,3.3,100ml
+35,Leche descremada,34,3.4,5,0.1,100g
+36,Pan integral,247,13,41,4.2,100g
+37,Pan blanco,265,9,49,3.2,100g
+38,Tortilla de maiz,218,5.7,45.6,2.9,100g
+39,Tortilla de trigo,304,8,50,7.9,100g
+40,Pasta cocida,131,5,25,1.1,100g
+41,Arroz integral cocido,123,2.7,25.6,1,100g
+42,Salmon,208,20,0,13,100g
+43,Atun en agua,116,26,0,0.8,100g
+44,Carne molida magra,217,26,0,12,100g
+45,Lomo de cerdo,242,27,0,14,100g
+46,Pechuga de pavo,135,29,0,1,100g
+47,Almendras,579,21.2,21.6,49.9,100g
+48,Mani,567,25.8,16.1,49.2,100g
+49,Nueces,654,15.2,13.7,65.2,100g
+50,Aceite de oliva,884,0,0,100,15ml
