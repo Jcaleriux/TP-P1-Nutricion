@@ -12,8 +12,8 @@
         /// </summary>
         /// <param name="username">The username.</param>
         /// <param name="password">The password.</param>
-        /// <returns>True if the login is successful; otherwise, false.</returns>
-        public bool Login(string username, string password);
+        /// <returns>The authenticated if the login is successful; otherwise, null.</returns>
+        public User? Login(string username, string password);
 
         /// <summary>
         /// Registers the specified user.

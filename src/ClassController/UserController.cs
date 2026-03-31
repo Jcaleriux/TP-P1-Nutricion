@@ -26,16 +26,14 @@
         /// </summary>
         /// <param name="Email">The email.</param>
         /// <param name="password">The password.</param>
-        /// <returns>
-        /// True if the login is successful; otherwise, false.
-        /// </returns>
-        public bool Login(string email, string password)
+        /// <returns>The authenticated user if the login is successful; otherwise, null</returns>
+        public User? Login(string email, string password)
         {
-            if (this.users != null && this.ExistsUser(email, password))
+            if (this.users != null)
             {
-                return true;
+                return this.GetUserByCredentials(email, password);
             }
-            return false;
+            return null;
         }
 
         /// <summary>
@@ -62,17 +60,17 @@
             return false;
         }
 
-        private bool ExistsUser(string email, string password)
+        private User? GetUserByCredentials(string email, string password)
         {
             foreach (var user in this.users)
             {
                 if (user.Email == email && user.Password == password)
                 {
-                    return true;
+                    return user;
                 }
             }
 
-            return false;
+            return null;
         }
 
         private bool ExistsEmail(string Email)

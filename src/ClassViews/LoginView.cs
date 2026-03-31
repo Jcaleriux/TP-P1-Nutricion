@@ -1,6 +1,7 @@
 ﻿namespace ClassViews
 {
     using ClassController;
+    using ClassModels;
 
     /// <summary>
     /// View for the login form.
@@ -24,12 +25,12 @@
 
         private void BtnLogin_Click(object sender, EventArgs e)
         {
-            var result = this.loginController.Login(this.email, this.password);
+            var authenticatedUser = this.loginController.Login(this.Email, this.Password);
 
-            if (result)
+            if (authenticatedUser is not null)
             {
                 MessageBox.Show("Login successful! Welcome!");
-                var principalForm = new MainForm();
+                var principalForm = new MainForm(this.productController, authenticatedUser);
                 principalForm.Show();
             }
             else
@@ -37,6 +38,7 @@
                 MessageBox.Show("Login failed. Please check your email and password.");
             }
         }
+
         private void btnRegister_Click(object sender, EventArgs e)
         {
             var registerView = new RegisterView(this.loginController);
