@@ -9,16 +9,16 @@
     public class UserController : IUserController
     {
         private readonly List<User> users;
-        private readonly IDataHandler<User> dataHandler;
+        private readonly IRepository<User> repository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="UserController"/> class.
         /// </summary>
-        /// <param name="dataHandler">The data handler.</param>
-        public UserController(IDataHandler<User> dataHandler)
+        /// <param name="repository">The user repository.</param>
+        public UserController(IRepository<User> repository)
         {
-            this.dataHandler = dataHandler;
-            this.users = dataHandler.LoadData();
+            this.repository = repository;
+            this.users = repository.LoadData();
         }
 
         /// <summary>
@@ -54,7 +54,7 @@
 
                 user.UserId = this.GetNextUserId();
                 this.users.Add(user);
-                var result = this.dataHandler.SaveData(this.users);
+                var result = this.repository.SaveData(this.users);
                 return result;
             }
             return false;

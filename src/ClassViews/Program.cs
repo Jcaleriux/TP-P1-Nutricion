@@ -1,4 +1,5 @@
 using ClassController;
+using ClassController.Abstractions;
 using ClassModels;
 using ClassViews.Configuration;
 
@@ -7,33 +8,42 @@ namespace ClassViews
     internal static class Program
     {
         /// <summary>
-        ///  The main entry point for the application.
+        /// The main entry point for the application.
         /// </summary>
         [STAThread]
         static void Main()
         {
             ApplicationConfiguration.Initialize();
-            var (loginController, productController, menuController, nutritionCalculator) = LoadServices();
-            using var loginView = new LoginView(loginController, productController, menuController, nutritionCalculator);
+            var (loginController, productController, menuController, nutritionStatisticsController) = LoadServices();
+            using var loginView = new LoginView(
+                loginController,
+                productController,
+                menuController,
+                nutritionStatisticsController);
+
             Application.Run(loginView);
         }
 
-        private static (LoginController LoginController, ProductController ProductController, MenuController MenuController, NutritionCalculator NutritionCalculator) LoadServices()
+        private static (
+            LoginController LoginController,
+            ProductController ProductController,
+            MenuController MenuController,
+            INutritionStatisticsController NutritionStatisticsController) LoadServices()
         {
-            var userFileHandler = new UserFileHandler(ConfigurationItems.UserFilePath);
-            var userController = new UserController(userFileHandler);
+            var userRepository = new UserRepository(ConfigurationItems.UserFilePath);
+            var userController = new UserController(userRepository);
             var loginController = new LoginController(userController);
 
-            var productFileHandler = new ProductFileHandler(ConfigurationItems.ProductsFilePath);
-            var productController = new ProductController(productFileHandler);
+            var productRepository = new ProductRepository(ConfigurationItems.ProductsFilePath);
+            var productController = new ProductController(productRepository);
 
-            var menuFileHandler = new MenuFileHandler(ConfigurationItems.MenusFilePath);
-            var menuProductFileHandler = new MenuProductFileHandler(ConfigurationItems.MenuProductsFilePath);
-            var menuController = new MenuController(menuFileHandler, menuProductFileHandler, productController);
+            var menuRepository = new MenuRepository(ConfigurationItems.MenusFilePath);
+            var menuProductRepository = new MenuProductRepository(ConfigurationItems.MenuProductsFilePath);
+            var menuController = new MenuController(menuRepository, menuProductRepository, productController);
 
-            var nutritionCalculator = new NutritionCalculator();
+            var nutritionStatisticsController = new NutritionStatisticsController(menuController);
 
-            return (loginController, productController, menuController, nutritionCalculator);
+            return (loginController, productController, menuController, nutritionStatisticsController);
         }
     }
 }

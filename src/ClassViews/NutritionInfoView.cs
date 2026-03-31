@@ -10,18 +10,15 @@
     public partial class NutritionInfoView : Form
     {
         private readonly User currentUser;
-        private readonly NutritionCalculator nutritionCalculator;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="NutritionInfoView"/> class.
         /// </summary>
         /// <param name="currentUser">The authenticated user.</param>
-        /// <param name="nutritionCalculator">The nutrition calculator.</param>
-        public NutritionInfoView(User currentUser, NutritionCalculator nutritionCalculator)
+        public NutritionInfoView(User currentUser)
         {
             this.InitializeComponent();
             this.currentUser = currentUser;
-            this.nutritionCalculator = nutritionCalculator;
         }
 
         private void NutritionInfoView_Load(object sender, EventArgs e)
@@ -31,11 +28,11 @@
 
         private void LoadNutritionInfo()
         {
-            var bmi = this.nutritionCalculator.CalculateBmi(this.currentUser);
-            var bmiCategory = this.nutritionCalculator.GetBmiCategory(bmi);
-            var maintenanceCalories = this.nutritionCalculator.CalculateMaintenanceCalories(this.currentUser);
-            var goalCalories = this.nutritionCalculator.CalculateGoalCalories(this.currentUser);
-            var macros = this.nutritionCalculator.CalculateMacroTargets(this.currentUser);
+            var bmi = NutritionCalculator.CalculateBmi(this.currentUser);
+            var bmiCategory = NutritionCalculator.GetBmiCategory(bmi);
+            var maintenanceCalories = NutritionCalculator.CalculateMaintenanceCalories(this.currentUser);
+            var goalCalories = NutritionCalculator.CalculateGoalCalories(this.currentUser);
+            var macros = NutritionCalculator.CalculateMacroTargets(this.currentUser);
 
             this.lblMaintenanceValue.Text = $"{maintenanceCalories.ToString("F2", CultureInfo.InvariantCulture)} kcal";
             this.lblGoalValue.Text = $"{goalCalories.ToString("F2", CultureInfo.InvariantCulture)} kcal";

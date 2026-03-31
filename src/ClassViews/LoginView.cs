@@ -1,6 +1,7 @@
-﻿namespace ClassViews
+namespace ClassViews
 {
     using ClassController;
+    using ClassController.Abstractions;
     using ClassModels;
 
     /// <summary>
@@ -12,7 +13,7 @@
         private readonly LoginController loginController;
         private readonly ProductController productController;
         private readonly MenuController menuController;
-        private readonly NutritionCalculator nutritionCalculator;
+        private readonly INutritionStatisticsController nutritionStatisticsController;
 
         private string Email => this.txtEmail.Text;
         private string Password => this.txtPassword.Text;
@@ -23,18 +24,18 @@
         /// <param name="loginController">The login controller.</param>
         /// <param name="productController">The product controller.</param>
         /// <param name="menuController">The menu controller.</param>
-        /// <param name="nutritionCalculator">The nutrition calculator.</param>
+        /// <param name="nutritionStatisticsController">The nutrition statistics controller.</param>
         public LoginView(
             LoginController loginController,
             ProductController productController,
             MenuController menuController,
-            NutritionCalculator nutritionCalculator)
+            INutritionStatisticsController nutritionStatisticsController)
         {
             this.InitializeComponent();
             this.loginController = loginController;
             this.productController = productController;
             this.menuController = menuController;
-            this.nutritionCalculator = nutritionCalculator;
+            this.nutritionStatisticsController = nutritionStatisticsController;
         }
 
         private void BtnLogin_Click(object sender, EventArgs e)
@@ -44,15 +45,14 @@
             if (authenticatedUser is not null)
             {
                 MessageBox.Show("Login successful! Welcome!");
-                var principalForm = new MainForm(
+                using var principalForm = new MainForm(
                     this.productController,
                     this.menuController,
-                    this.nutritionCalculator,
+                    this.nutritionStatisticsController,
                     authenticatedUser);
-
-                principalForm.FormClosed += (_, _) => this.Close();
-                principalForm.Show();
                 this.Hide();
+                principalForm.ShowDialog();
+                this.Close();
             }
             else
             {

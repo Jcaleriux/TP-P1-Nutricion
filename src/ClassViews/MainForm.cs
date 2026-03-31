@@ -1,6 +1,7 @@
 namespace ClassViews
 {
     using ClassController;
+    using ClassController.Abstractions;
     using ClassModels;
 
     /// <summary>
@@ -11,25 +12,25 @@ namespace ClassViews
         private readonly User currentUser;
         private readonly ProductController productController;
         private readonly MenuController menuController;
-        private readonly NutritionCalculator nutritionCalculator;
+        private readonly INutritionStatisticsController nutritionStatisticsController;
 
         /// <summary>
         /// Initializes a new instance of the MainForm.
         /// </summary>
         /// <param name="productController">The product controller.</param>
         /// <param name="menuController">The menu controller.</param>
-        /// <param name="nutritionCalculator">The nutrition calculator.</param>
+        /// <param name="nutritionStatisticsController">The nutrition statistics controller.</param>
         /// <param name="currentUser">The authenticated user.</param>
         public MainForm(
             ProductController productController,
             MenuController menuController,
-            NutritionCalculator nutritionCalculator,
+            INutritionStatisticsController nutritionStatisticsController,
             User currentUser)
         {
             this.InitializeComponent();
             this.productController = productController;
             this.menuController = menuController;
-            this.nutritionCalculator = nutritionCalculator;
+            this.nutritionStatisticsController = nutritionStatisticsController;
             this.currentUser = currentUser;
         }
 
@@ -47,8 +48,17 @@ namespace ClassViews
 
         private void btnNutritionInfo_Click(object sender, EventArgs e)
         {
-            using var nutritionInfoView = new NutritionInfoView(this.currentUser, this.nutritionCalculator);
+            using var nutritionInfoView = new NutritionInfoView(this.currentUser);
             nutritionInfoView.ShowDialog();
+        }
+
+        private void btnStatistics_Click(object sender, EventArgs e)
+        {
+            using var statisticsView = new StatisticsView(
+                this.currentUser,
+                this.nutritionStatisticsController);
+
+            statisticsView.ShowDialog();
         }
 
         private void MainForm_Load(object sender, EventArgs e)

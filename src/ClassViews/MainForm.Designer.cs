@@ -1,14 +1,14 @@
-﻿namespace ClassViews
+namespace ClassViews
 {
     partial class MainForm
     {
         /// <summary>
-        ///  Required designer variable.
+        /// Required designer variable.
         /// </summary>
         private System.ComponentModel.IContainer components = null;
 
         /// <summary>
-        ///  Clean up any resources being used.
+        /// Clean up any resources being used.
         /// </summary>
         /// <param name="disposing">true if managed resources should be disposed; otherwise, false.</param>
         protected override void Dispose(bool disposing)
@@ -17,14 +17,14 @@
             {
                 components.Dispose();
             }
+
             base.Dispose(disposing);
         }
 
         #region Windows Form Designer generated code
 
         /// <summary>
-        ///  Required method for Designer support - do not modify
-        ///  the contents of this method with the code editor.
+        /// Required method for Designer support.
         /// </summary>
         private void InitializeComponent()
         {
@@ -33,6 +33,7 @@
             lblWelcome = new Label();
             btnManageMenus = new Button();
             btnNutritionInfo = new Button();
+            btnStatistics = new Button();
             SuspendLayout();
             // 
             // btnManageProducts
@@ -84,11 +85,22 @@
             btnNutritionInfo.UseVisualStyleBackColor = true;
             btnNutritionInfo.Click += btnNutritionInfo_Click;
             // 
+            // btnStatistics
+            // 
+            btnStatistics.Location = new Point(32, 289);
+            btnStatistics.Name = "btnStatistics";
+            btnStatistics.Size = new Size(147, 29);
+            btnStatistics.TabIndex = 5;
+            btnStatistics.Text = "Statistics";
+            btnStatistics.UseVisualStyleBackColor = true;
+            btnStatistics.Click += btnStatistics_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(914, 600);
+            Controls.Add(btnStatistics);
             Controls.Add(btnNutritionInfo);
             Controls.Add(btnManageMenus);
             Controls.Add(lblWelcome);
@@ -109,5 +121,6 @@
         private Label lblWelcome;
         private Button btnManageMenus;
         private Button btnNutritionInfo;
+        private Button btnStatistics;
     }
 }

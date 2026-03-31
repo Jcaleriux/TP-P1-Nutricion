@@ -1,37 +1,37 @@
-﻿namespace ClassController
+namespace ClassController
 {
     using ClassController.Abstractions;
     using ClassModels;
     using System.Globalization;
 
     /// <summary>
-    /// Class in charge of handling menu product data operations by files.
+    /// Repository that manages menu persistence through CSV files.
     /// </summary>
-    public class MenuProductFileHandler : IDataHandler<MenuProduct>
+    public class MenuRepository : IRepository<Menu>
     {
         private readonly string filePath;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="MenuProductFileHandler"/> class.
+        /// Initializes a new instance of the <see cref="MenuRepository"/> class.
         /// </summary>
         /// <param name="filePath">The file path.</param>
-        public MenuProductFileHandler(string filePath)
+        public MenuRepository(string filePath)
         {
             this.filePath = filePath;
         }
 
         /// <summary>
-        /// Loads menu product data from the file.
+        /// Loads menu data from the file.
         /// </summary>
-        /// <returns>The loaded menu product data.</returns>
-        public List<MenuProduct> LoadData()
+        /// <returns>The loaded menu data.</returns>
+        public List<Menu> LoadData()
         {
             if (string.IsNullOrWhiteSpace(this.filePath) || !File.Exists(this.filePath))
             {
                 throw new FileNotFoundException($"The file '{this.filePath}' was not found.");
             }
 
-            var data = new List<MenuProduct>();
+            var data = new List<Menu>();
             var lines = File.ReadAllLines(this.filePath);
 
             for (var i = 1; i < lines.Length; i++)
@@ -42,29 +42,29 @@
                 }
 
                 var lineElements = lines[i].Split(',');
-                var menuProduct = new MenuProduct(lineElements);
-                data.Add(menuProduct);
+                var menu = new Menu(lineElements);
+                data.Add(menu);
             }
 
             return data;
         }
 
         /// <summary>
-        /// Saves menu product data to the file.
+        /// Saves menu data to the file.
         /// </summary>
-        /// <param name="data">The menu product data.</param>
+        /// <param name="data">The menu data.</param>
         /// <returns>True if the data is saved successfully; otherwise, false.</returns>
-        public bool SaveData(List<MenuProduct> data)
+        public bool SaveData(List<Menu> data)
         {
             var lines = new List<string>
             {
-                "MenuProductId,MenuId,MealTime,ProductId,Quantity",
+                "MenuId,UserId,Date",
             };
 
-            foreach (var menuProduct in data)
+            foreach (var menu in data)
             {
                 lines.Add(
-                    $"{menuProduct.MenuProductId},{menuProduct.MenuId},{menuProduct.MealTime},{menuProduct.ProductId},{menuProduct.Quantity.ToString(CultureInfo.InvariantCulture)}");
+                    $"{menu.MenuId},{menu.UserId},{menu.Date.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture)}");
             }
 
             File.WriteAllLines(this.filePath, lines);

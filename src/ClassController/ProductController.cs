@@ -9,16 +9,16 @@
     public class ProductController : IProductController
     {
         private readonly List<Product> products;
-        private readonly IDataHandler<Product> dataHandler;
+        private readonly IRepository<Product> repository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductController"/> class.
         /// </summary>
-        /// <param name="dataHandler">The data handler.</param>
-        public ProductController(IDataHandler<Product> dataHandler)
+        /// <param name="repository">The product repository.</param>
+        public ProductController(IRepository<Product> repository)
         {
-            this.dataHandler = dataHandler;
-            this.products = dataHandler.LoadData();
+            this.repository = repository;
+            this.products = repository.LoadData();
         }
 
         /// <summary>
@@ -47,7 +47,7 @@
             product.ProductId = this.GetNextProductId();
             this.products.Add(product);
 
-            return this.dataHandler.SaveData(this.products);
+            return this.repository.SaveData(this.products);
         }
 
         /// <summary>
@@ -77,7 +77,7 @@
             existingProduct.Fat = product.Fat;
             existingProduct.Unit = product.Unit;
 
-            return this.dataHandler.SaveData(this.products);
+            return this.repository.SaveData(this.products);
         }
 
         private bool ExistsProductName(string name, int excludedProductId)

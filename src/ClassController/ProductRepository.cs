@@ -1,21 +1,21 @@
-﻿namespace ClassController
+namespace ClassController
 {
     using ClassController.Abstractions;
     using ClassModels;
     using System.Globalization;
 
     /// <summary>
-    /// Class in charge of handling the product data operation by files.
+    /// Repository that manages product persistence through CSV files.
     /// </summary>
-    public class ProductFileHandler : IDataHandler<Product>
+    public class ProductRepository : IRepository<Product>
     {
         private readonly string filePath;
 
         /// <summary>
-        /// Initializes a new instance of the <see cref="ProductFileHandler"/> class.
+        /// Initializes a new instance of the <see cref="ProductRepository"/> class.
         /// </summary>
         /// <param name="filePath">The file path.</param>
-        public ProductFileHandler(string filePath)
+        public ProductRepository(string filePath)
         {
             this.filePath = filePath;
         }

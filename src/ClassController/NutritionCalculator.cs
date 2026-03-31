@@ -5,14 +5,14 @@
     /// <summary>
     /// Provides nutritional calculations based on user information.
     /// </summary>
-    public class NutritionCalculator
+    public static class NutritionCalculator
     {
         /// <summary>
         /// Calculates the body mass index of a user.
         /// </summary>
         /// <param name="user">The user.</param>
         /// <returns>The BMI value.</returns>
-        public decimal CalculateBmi(User user)
+        public static decimal CalculateBmi(User user)
         {
             var heightInMeters = user.HeightCm / 100m;
 
@@ -29,7 +29,7 @@
         /// </summary>
         /// <param name="bmi">The BMI value.</param>
         /// <returns>The BMI category.</returns>
-        public string GetBmiCategory(decimal bmi)
+        public static string GetBmiCategory(decimal bmi)
         {
             if (bmi < 18.5m)
             {
@@ -54,7 +54,7 @@
         /// </summary>
         /// <param name="user">The user.</param>
         /// <returns>The maintenance calories.</returns>
-        public decimal CalculateMaintenanceCalories(User user)
+        public static decimal CalculateMaintenanceCalories(User user)
         {
             decimal bmr;
 
@@ -67,7 +67,7 @@
                 bmr = (10 * user.WeightKg) + (6.25m * user.HeightCm) - (5 * user.Age) - 161;
             }
 
-            var activityFactor = this.GetActivityFactor(user.ActivityLevel);
+            var activityFactor = GetActivityFactor(user.ActivityLevel);
             return bmr * activityFactor;
         }
 
@@ -76,9 +76,9 @@
         /// </summary>
         /// <param name="user">The user.</param>
         /// <returns>The target calories.</returns>
-        public decimal CalculateGoalCalories(User user)
+        public static decimal CalculateGoalCalories(User user)
         {
-            var maintenanceCalories = this.CalculateMaintenanceCalories(user);
+            var maintenanceCalories = CalculateMaintenanceCalories(user);
 
             return user.Goal switch
             {
@@ -93,9 +93,9 @@
         /// </summary>
         /// <param name="user">The user.</param>
         /// <returns>The macro targets in grams.</returns>
-        public (decimal Protein, decimal Carbs, decimal Fat) CalculateMacroTargets(User user)
+        public static (decimal Protein, decimal Carbs, decimal Fat) CalculateMacroTargets(User user)
         {
-            var targetCalories = this.CalculateGoalCalories(user);
+            var targetCalories = CalculateGoalCalories(user);
 
             decimal proteinPercentage;
             decimal carbsPercentage;
@@ -129,7 +129,7 @@
             return (proteinGrams, carbsGrams, fatGrams);
         }
 
-        private decimal GetActivityFactor(string activityLevel)
+        private static decimal GetActivityFactor(string activityLevel)
         {
             return activityLevel switch
             {

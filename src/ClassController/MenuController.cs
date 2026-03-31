@@ -10,27 +10,27 @@
     {
         private readonly List<Menu> menus;
         private readonly List<MenuProduct> menuProducts;
-        private readonly IDataHandler<Menu> menuDataHandler;
-        private readonly IDataHandler<MenuProduct> menuProductDataHandler;
+        private readonly IRepository<Menu> menuRepository;
+        private readonly IRepository<MenuProduct> menuProductRepository;
         private readonly IProductController productController;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="MenuController"/> class.
         /// </summary>
-        /// <param name="menuDataHandler">The menu data handler.</param>
-        /// <param name="menuProductDataHandler">The menu product data handler.</param>
+        /// <param name="menuRepository">The menu repository.</param>
+        /// <param name="menuProductRepository">The menu-product repository.</param>
         /// <param name="productController">The product controller.</param>
         public MenuController(
-            IDataHandler<Menu> menuDataHandler,
-            IDataHandler<MenuProduct> menuProductDataHandler,
+            IRepository<Menu> menuRepository,
+            IRepository<MenuProduct> menuProductRepository,
             IProductController productController)
         {
-            this.menuDataHandler = menuDataHandler;
-            this.menuProductDataHandler = menuProductDataHandler;
+            this.menuRepository = menuRepository;
+            this.menuProductRepository = menuProductRepository;
             this.productController = productController;
 
-            this.menus = menuDataHandler.LoadData();
-            this.menuProducts = menuProductDataHandler.LoadData();
+            this.menus = menuRepository.LoadData();
+            this.menuProducts = menuProductRepository.LoadData();
         }
 
         /// <summary>
@@ -88,8 +88,8 @@
                 this.menuProducts.Add(item);
             }
 
-            var menuSaved = this.menuDataHandler.SaveData(this.menus);
-            var menuProductsSaved = this.menuProductDataHandler.SaveData(this.menuProducts);
+            var menuSaved = this.menuRepository.SaveData(this.menus);
+            var menuProductsSaved = this.menuProductRepository.SaveData(this.menuProducts);
 
             return menuSaved && menuProductsSaved;
         }
@@ -130,8 +130,8 @@
                 this.menuProducts.Add(item);
             }
 
-            var menuSaved = this.menuDataHandler.SaveData(this.menus);
-            var menuProductsSaved = this.menuProductDataHandler.SaveData(this.menuProducts);
+            var menuSaved = this.menuRepository.SaveData(this.menus);
+            var menuProductsSaved = this.menuProductRepository.SaveData(this.menuProducts);
 
             return menuSaved && menuProductsSaved;
         }
@@ -185,8 +185,8 @@
             this.menus.Remove(menu);
             this.menuProducts.RemoveAll(item => item.MenuId == menuId);
 
-            var menuSaved = this.menuDataHandler.SaveData(this.menus);
-            var menuProductsSaved = this.menuProductDataHandler.SaveData(this.menuProducts);
+            var menuSaved = this.menuRepository.SaveData(this.menus);
+            var menuProductsSaved = this.menuProductRepository.SaveData(this.menuProducts);
 
             return menuSaved && menuProductsSaved;
         }
