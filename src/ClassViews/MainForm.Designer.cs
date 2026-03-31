@@ -31,6 +31,8 @@
             btnManageProducts = new Button();
             lblTitle = new Label();
             lblWelcome = new Label();
+            btnManageMenus = new Button();
+            btnNutritionInfo = new Button();
             SuspendLayout();
             // 
             // btnManageProducts
@@ -62,11 +64,33 @@
             lblWelcome.TabIndex = 2;
             lblWelcome.Text = "Welcome";
             // 
+            // btnManageMenus
+            // 
+            btnManageMenus.Location = new Point(32, 189);
+            btnManageMenus.Name = "btnManageMenus";
+            btnManageMenus.Size = new Size(147, 29);
+            btnManageMenus.TabIndex = 3;
+            btnManageMenus.Text = "Manage Menus";
+            btnManageMenus.UseVisualStyleBackColor = true;
+            btnManageMenus.Click += btnManageMenus_Click;
+            // 
+            // btnNutritionInfo
+            // 
+            btnNutritionInfo.Location = new Point(32, 239);
+            btnNutritionInfo.Name = "btnNutritionInfo";
+            btnNutritionInfo.Size = new Size(147, 29);
+            btnNutritionInfo.TabIndex = 4;
+            btnNutritionInfo.Text = "Nutrition Info";
+            btnNutritionInfo.UseVisualStyleBackColor = true;
+            btnNutritionInfo.Click += btnNutritionInfo_Click;
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(914, 600);
+            Controls.Add(btnNutritionInfo);
+            Controls.Add(btnManageMenus);
             Controls.Add(lblWelcome);
             Controls.Add(lblTitle);
             Controls.Add(btnManageProducts);
@@ -83,5 +107,7 @@
         private Button btnManageProducts;
         private Label lblTitle;
         private Label lblWelcome;
+        private Button btnManageMenus;
+        private Button btnNutritionInfo;
     }
 }

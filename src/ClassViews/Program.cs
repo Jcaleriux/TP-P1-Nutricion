@@ -12,14 +12,13 @@ namespace ClassViews
         [STAThread]
         static void Main()
         {
-            // To customize application configuration such as set high DPI settings or default font,
-            // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
-            var (loginController, productController) = LoadServices();
-            using var loginView = new LoginView(loginController, productController);
+            var (loginController, productController, menuController, nutritionCalculator) = LoadServices();
+            using var loginView = new LoginView(loginController, productController, menuController, nutritionCalculator);
             Application.Run(loginView);
         }
-        private static (LoginController LoginController, ProductController ProductController )LoadServices()
+
+        private static (LoginController LoginController, ProductController ProductController, MenuController MenuController, NutritionCalculator NutritionCalculator) LoadServices()
         {
             var userFileHandler = new UserFileHandler(ConfigurationItems.UserFilePath);
             var userController = new UserController(userFileHandler);
@@ -28,7 +27,13 @@ namespace ClassViews
             var productFileHandler = new ProductFileHandler(ConfigurationItems.ProductsFilePath);
             var productController = new ProductController(productFileHandler);
 
-            return (loginController, productController);
+            var menuFileHandler = new MenuFileHandler(ConfigurationItems.MenusFilePath);
+            var menuProductFileHandler = new MenuProductFileHandler(ConfigurationItems.MenuProductsFilePath);
+            var menuController = new MenuController(menuFileHandler, menuProductFileHandler, productController);
+
+            var nutritionCalculator = new NutritionCalculator();
+
+            return (loginController, productController, menuController, nutritionCalculator);
         }
     }
 }
