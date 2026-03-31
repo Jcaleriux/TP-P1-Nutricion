@@ -40,8 +40,8 @@
             for (var i = 1; i< lines.Length; i++)
             {
                 var lineElements = lines[i].Split(',');
-                var element = Activator.CreateInstance(typeof(User), new object[] { lineElements });
-                data.Add((User)element);
+                var user = new User(lineElements);
+                data.Add(user);
             }
 
             return data;
@@ -60,15 +60,10 @@
             var lines = new List<string>();
             lines.Add("UserId,Name,Email,Password,Goal,ActivityLevel,WeightKg,HeightCm,Age,Sex,DietType");
 
-            foreach (var item in data)
+            foreach (var user in data)
             {
-                var user = item as User;
-
-                if (user != null)
-                {
-                    lines.Add(
-                        $"{user.UserId},{user.Name},{user.Email},{user.Password},{user.Goal},{user.ActivityLevel},{user.WeightKg},{user.HeightCm},{user.Age},{user.Sex},{user.DietType}");
-                }
+                lines.Add(
+                    $"{user.UserId},{user.Name},{user.Email},{user.Password},{user.Goal},{user.ActivityLevel},{user.WeightKg},{user.HeightCm},{user.Age},{user.Sex},{user.DietType}");
             }
 
             File.WriteAllLines(filePath, lines);

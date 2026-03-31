@@ -125,25 +125,25 @@
                 return false;
             }
 
-            if (!this.TryParseDecimal(this.txtCalories.Text, out _))
+            if (!TryParseDecimal(this.txtCalories.Text, out _))
             {
                 MessageBox.Show("Calories must be a valid number.");
                 return false;
             }
 
-            if (!this.TryParseDecimal(this.txtProtein.Text, out _))
+            if (!TryParseDecimal(this.txtProtein.Text, out _))
             {
                 MessageBox.Show("Protein must be a valid number.");
                 return false;
             }
 
-            if (!this.TryParseDecimal(this.txtCarbs.Text, out _))
+            if (!TryParseDecimal(this.txtCarbs.Text, out _))
             {
                 MessageBox.Show("Carbs must be a valid number.");
                 return false;
             }
 
-            if (!this.TryParseDecimal(this.txtFat.Text, out _))
+            if (!TryParseDecimal(this.txtFat.Text, out _))
             {
                 MessageBox.Show("Fat must be a valid number.");
                 return false;
@@ -157,20 +157,20 @@
             return new Product(
                 productId,
                 this.txtName.Text.Trim(),
-                this.ParseDecimal(this.txtCalories.Text),
-                this.ParseDecimal(this.txtProtein.Text),
-                this.ParseDecimal(this.txtCarbs.Text),
-                this.ParseDecimal(this.txtFat.Text),
+                ParseDecimal(this.txtCalories.Text),
+                ParseDecimal(this.txtProtein.Text),
+                ParseDecimal(this.txtCarbs.Text),
+                ParseDecimal(this.txtFat.Text),
                 this.txtUnit.Text.Trim());
         }
 
-        private bool TryParseDecimal(string value, out decimal result)
+        private static bool TryParseDecimal(string value, out decimal result)
         {
             return decimal.TryParse(value.Trim(), out result) ||
                 decimal.TryParse(value.Trim(), NumberStyles.Number, CultureInfo.InvariantCulture, out result);
         }
 
-        private decimal ParseDecimal(string value)
+        private static decimal ParseDecimal(string value)
         {
             if (decimal.TryParse(value.Trim(), out var result))
             {

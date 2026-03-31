@@ -52,11 +52,12 @@
                 txtPassword.Text,
                 cmbGoal.Text,
                 cmbActivityLevel.Text,
-                decimal.Parse(txtWeightKg.Text),
-                decimal.Parse(txtHeightCm.Text),
-                int.Parse(txtAge.Text),
+                decimal.Parse(txtWeightKg.Text, System.Globalization.CultureInfo.InvariantCulture),
+                decimal.Parse(txtHeightCm.Text, System.Globalization.CultureInfo.InvariantCulture),
+                int.Parse(txtAge.Text, System.Globalization.CultureInfo.InvariantCulture),
                 cmbSex.Text,
                 cmbDietType.Text);
+
 
             var result = this.loginController.Register(user);
 

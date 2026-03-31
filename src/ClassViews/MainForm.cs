@@ -1,7 +1,7 @@
 namespace ClassViews
 {
     using ClassController;
-    using ClassModels;  
+    using ClassModels;
 
     /// <summary>
     /// View for the main form of the application.
@@ -14,8 +14,8 @@ namespace ClassViews
         /// <summary>
         /// Initializes a new instance of the MainForm.
         /// </summary>
-        /// <param name="productController">The controller used to manage product-related operations within the form. Cannot be null.</param>
-        /// <param name="currentUser">The user who is currently logged in and interacting with the form. Cannot be null.</param>
+        /// <param name="productController">The product controller.</param>
+        /// <param name="currentUser">The authenticated user.</param>
         public MainForm(ProductController productController, User currentUser)
         {
             this.InitializeComponent();
@@ -25,11 +25,11 @@ namespace ClassViews
 
         private void btnManageProducts_Click(object sender, EventArgs e)
         {
-            this.InitializeComponent();
-            this.productController = productController;
+            using var productView = new ProductView(this.productController);
+            productView.ShowDialog();
         }
 
-        private void btnManageProducts_Click(object sender, EventArgs e)
+        private void MainForm_Load(object sender, EventArgs e)
         {
             this.lblWelcome.Text = $"Welcome {this.currentUser.Name}";
         }

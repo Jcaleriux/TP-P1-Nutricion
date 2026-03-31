@@ -28,12 +28,13 @@
 
         private void BtnLogin_Click(object sender, EventArgs e)
         {
-            var result = this.loginController.Login(this.Email, this.Password);
+            var authenticatedUser = this.loginController.Login(this.Email, this.Password);
 
             if (authenticatedUser is not null)
             {
                 MessageBox.Show("Login successful! Welcome!");
-                var principalForm = new MainForm(this.productController);
+                var principalForm = new MainForm(this.productController, authenticatedUser);
+                principalForm.FormClosed += (_, _) => this.Close();
                 principalForm.Show();
                 this.Hide();
             }
@@ -45,7 +46,7 @@
 
         private void btnRegister_Click(object sender, EventArgs e)
         {
-            var registerView = new RegisterView(this.loginController);
+            using var registerView = new RegisterView(this.loginController);
             registerView.ShowDialog();
         }
     }

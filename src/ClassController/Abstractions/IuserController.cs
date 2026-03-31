@@ -8,12 +8,12 @@
     public interface IUserController
     {
         /// <summary>
-        /// Logins the specified username.
+        /// Logins the specified email.
         /// </summary>
-        /// <param name="username">The username.</param>
+        /// <param name="email">The email.</param>
         /// <param name="password">The password.</param>
         /// <returns>The authenticated if the login is successful; otherwise, null.</returns>
-        public User? Login(string username, string password);
+        public User? Login(string email, string password);
 
         /// <summary>
         /// Registers the specified user.
