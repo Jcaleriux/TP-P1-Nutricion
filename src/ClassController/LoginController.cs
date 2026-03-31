@@ -24,8 +24,8 @@
         /// </summary>
         /// <param name="userName">The userName.</param>
         /// <param name="password">The password.</param>
-        /// <returns>True if th elogin us successful; otherwise, false.</returns>
-        public bool Login(string userName, string password)
+        /// <returns>The authenticated user if the login is successful; otherwise, null.</returns>
+        public User? Login(string userName, string password)
         {
             return this.userController.Login(userName,password);
         }

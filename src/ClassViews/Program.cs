@@ -16,7 +16,8 @@ namespace ClassViews
             // see https://aka.ms/applicationconfiguration.
             ApplicationConfiguration.Initialize();
             var (loginController, productController) = LoadServices();
-            Application.Run(new LoginView(loginController, productController));
+            using var loginView = new LoginView(loginController, productController);
+            Application.Run(loginView);
         }
         private static (LoginController LoginController, ProductController ProductController )LoadServices()
         {

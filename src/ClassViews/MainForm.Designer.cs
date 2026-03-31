@@ -30,6 +30,7 @@
         {
             btnManageProducts = new Button();
             lblTitle = new Label();
+            lblWelcome = new Label();
             SuspendLayout();
             // 
             // btnManageProducts
@@ -52,11 +53,21 @@
             lblTitle.TabIndex = 1;
             lblTitle.Text = "Nutrition For Everyone";
             // 
+            // lblWelcome
+            // 
+            lblWelcome.AutoSize = true;
+            lblWelcome.Location = new Point(392, 97);
+            lblWelcome.Name = "lblWelcome";
+            lblWelcome.Size = new Size(71, 20);
+            lblWelcome.TabIndex = 2;
+            lblWelcome.Text = "Welcome";
+            // 
             // MainForm
             // 
             AutoScaleDimensions = new SizeF(8F, 20F);
             AutoScaleMode = AutoScaleMode.Font;
             ClientSize = new Size(914, 600);
+            Controls.Add(lblWelcome);
             Controls.Add(lblTitle);
             Controls.Add(btnManageProducts);
             Margin = new Padding(3, 4, 3, 4);
@@ -71,5 +82,6 @@
 
         private Button btnManageProducts;
         private Label lblTitle;
+        private Label lblWelcome;
     }
 }
