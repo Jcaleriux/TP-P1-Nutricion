@@ -1,0 +1,45 @@
+﻿@page "/"
+
+@inject LoginController loginController
+@inject NavigationManager Navigation
+@inject SessionService sessionService
+
+<h3>Login</h3>
+
+<input placeholder="Email" @bind="email" />
+<input type="password" placeholder="Password" @bind="password" />
+
+<button @onclick="Login">Ingresar</button>
+<button @onclick="GoToRegister">Registrarse</button>
+
+@if (!string.IsNullOrEmpty(message))
+{
+    <p>@message</p>
+}
+
+@code {
+    private string email ="";
+    private string password ="";
+    private string message ="";
+
+    private void Login()
+    {
+        var authenticatedUser = loginController.Login(email, password);
+
+        if (authenticatedUser != null)
+        {
+            sessionService.CurrentUser = authenticatedUser;
+
+            Navigation.NavigateTo("/main");
+        }
+        else
+        {
+            message = "Login fallido. Verifica tus credenciales.";
+        }
+    }
+
+    private void GoToRegister()
+    {
+        Navigation.NavigateTo("/register");
+    }
+}
