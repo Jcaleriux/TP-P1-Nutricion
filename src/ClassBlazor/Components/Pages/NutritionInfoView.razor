@@ -1,0 +1,64 @@
+﻿@page "/nutritionInfo"
+
+@inject SessionService SessionService
+@inject NavigationManager Navigation
+
+<h3>Nutrition Information</h3>
+
+@if (SessionService.CurrentUser is null)
+{
+    <p>Redirecting...</p>
+}
+else
+{
+    <p><strong>BMI:</strong> @bmi</p>
+    <p><strong>Category:</strong> @bmiCategory</p>
+    <p><strong>Maintenance Calories:</strong> @maintenanceCalories kcal</p>
+    <p><strong>Goal Calories:</strong> @goalCalories kcal</p>
+    <p><strong>Protein:</strong> @protein g</p>
+    <p><strong>Carbs:</strong> @carbs g</p>
+    <p><strong>Fat:</strong> @fat g</p>
+    <button @onclick="GoBack">Volver</button>
+}
+
+@code {
+    private decimal bmi;
+    private string bmiCategory = "";
+    private decimal maintenanceCalories;
+    private decimal goalCalories;
+    private decimal protein;
+    private decimal carbs;
+    private decimal fat;
+
+    protected override void OnInitialized()
+    {
+        if (SessionService.CurrentUser is null)
+        {
+            Navigation.NavigateTo("/");
+            return;
+        }
+
+        LoadNutritionInfo();
+    }
+
+    private void LoadNutritionInfo()
+    {
+        var user = SessionService.CurrentUser!;
+
+        bmi = NutritionCalculator.CalculateBmi(user);
+        bmiCategory = NutritionCalculator.GetBmiCategory(bmi);
+        maintenanceCalories = NutritionCalculator.CalculateMaintenanceCalories(user);
+        goalCalories = NutritionCalculator.CalculateGoalCalories(user);
+
+        var macros = NutritionCalculator.CalculateMacroTargets(user);
+
+        protein = macros.Protein;
+        carbs = macros.Carbs;
+        fat = macros.Fat;
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/main");
+    }
+}

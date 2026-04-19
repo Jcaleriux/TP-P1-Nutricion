@@ -9,12 +9,12 @@
 <input placeholder="Email" @bind="email" />
 <input type="password" placeholder="Password" @bind="password" />
 
-<button @onclick="Login">Ingresar</button>
-<button @onclick="GoToRegister">Registrarse</button>
+<button @onclick="Login">Log In</button>
+<button @onclick="GoToRegister">Register</button>
 
 @if (!string.IsNullOrEmpty(message))
 {
-    <p>@message</p>
+    <p style="color:red">@message</p>
 }
 
 @code {
