@@ -1,10 +1,20 @@
 using ClassBlazor.Components;
+using ClassBlazor.Services;
+using ClassController;
+using ClassController.Abstractions;
+using ClassModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
+builder.Services.AddScoped<SessionService>();
+builder.Services.AddScoped<LoginController>();
+builder.Services.AddScoped<IUserController, UserController>();
+
+builder.Services.AddScoped<IRepository<User>>(sp =>
+    new UserRepository(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "data", "users.csv")));
 
 var app = builder.Build();
 
