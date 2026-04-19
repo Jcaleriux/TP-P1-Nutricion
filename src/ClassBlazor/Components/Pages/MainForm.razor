@@ -1,5 +1,55 @@
-﻿<h3>MainView</h3>
+@page "/main"
+
+@inject NavigationManager Navigation
+@inject SessionService SessionService
+
+<PageTitle>Main Form</PageTitle>
+
+<h1>Nutrition For Everyone</h1>
+
+@if (SessionService.CurrentUser is null)
+{
+    <p>Welcome</p>
+    <button @onclick="GoToLogin">Go to login</button>
+}
+else
+{
+    <p>@WelcomeMessage</p>
+
+    <button @onclick="@(() => ShowMessage("Manage Products"))">Manage Products</button>
+    <button @onclick="@(() => ShowMessage("Manage Menus"))">Manage Menus</button>
+    <button @onclick="@(() => ShowMessage("Nutrition Info"))">Nutrition Info</button>
+    <button @onclick="@(() => ShowMessage("Statistics"))">Statistics</button>
+
+    @if (!string.IsNullOrWhiteSpace(message))
+    {
+        <p>@message</p>
+    }
+}
 
 @code {
+    private string message = string.Empty;
 
+    private string WelcomeMessage =>
+        SessionService.CurrentUser is null
+            ? "Welcome"
+            : $"Welcome {SessionService.CurrentUser.Name}";
+
+    protected override void OnInitialized()
+    {
+        if (SessionService.CurrentUser is null)
+        {
+            Navigation.NavigateTo("/");
+        }
+    }
+
+    private void GoToLogin()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private void ShowMessage(string section)
+    {
+        message = $"{section} is not available yet.";
+    }
 }
