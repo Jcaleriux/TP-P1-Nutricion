@@ -26,3 +26,5 @@ UserId,Name,Email,Password,Goal,ActivityLevel,WeightKg,HeightCm,Age,Sex,DietType
 25,Ana,ana@gmail.com,123,Maintain,Light,60,161,22,Female,Vegetarian
 26,Juan,juan@gmail.com,123,GainMass,Moderate,80,193,35,Male,Vegetarian
 27,Steven,steven@gmail.com,123,LoseFat,Sedentary,90,170,28,Male,Keto
+28,Jordy,yordi.simo.01@gmail.com,admin,Maintain,Sedentary,77,177,23,Male,Standard
+29,Ashley,ash.ramirez@gmail.com,user,Maintain,Moderate,55,160,20,Female,Keto
