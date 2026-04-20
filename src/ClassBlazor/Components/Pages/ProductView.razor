@@ -1,0 +1,264 @@
+@page "/products"
+
+@inject ProductController ProductController
+@inject NavigationManager Navigation
+@inject SessionService SessionService
+
+<PageTitle>Product Management</PageTitle>
+
+<h1>Product Management</h1>
+
+@if (SessionService.CurrentUser is null)
+{
+    <button @onclick="GoToLogin">Go to login</button>
+}
+else
+{
+    <div>
+        <label>Name</label>
+        <input @bind="name" />
+    </div>
+
+    <div>
+        <label>Calories</label>
+        <input @bind="calories" />
+    </div>
+
+    <div>
+        <label>Protein</label>
+        <input @bind="protein" />
+    </div>
+
+    <div>
+        <label>Carbs</label>
+        <input @bind="carbs" />
+    </div>
+
+    <div>
+        <label>Fat</label>
+        <input @bind="fat" />
+    </div>
+
+    <div>
+        <label>Unit</label>
+        <input @bind="unit" />
+    </div>
+
+    <button @onclick="Register">Register</button>
+    <button @onclick="Update" disabled="@(selectedProductId == 0)">Update</button>
+    <button @onclick="Clear">Clear</button>
+    <button @onclick="GoToMain">Back</button>
+
+    @if (!string.IsNullOrWhiteSpace(message))
+    {
+        <p>@message</p>
+    }
+
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Name</th>
+                <th>Calories</th>
+                <th>Protein</th>
+                <th>Carbs</th>
+                <th>Fat</th>
+                <th>Unit</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var product in products)
+            {
+                <tr>
+                    <td>@product.ProductId</td>
+                    <td>@product.Name</td>
+                    <td>@product.Calories</td>
+                    <td>@product.Protein</td>
+                    <td>@product.Carbs</td>
+                    <td>@product.Fat</td>
+                    <td>@product.Unit</td>
+                    <td>
+                        <button @onclick="@(() => SelectProduct(product))">Select</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Product> products = [];
+    private int selectedProductId;
+    private string name = string.Empty;
+    private string calories = string.Empty;
+    private string protein = string.Empty;
+    private string carbs = string.Empty;
+    private string fat = string.Empty;
+    private string unit = string.Empty;
+    private string message = string.Empty;
+
+    protected override void OnInitialized()
+    {
+        if (SessionService.CurrentUser is null)
+        {
+            Navigation.NavigateTo("/");
+            return;
+        }
+
+        LoadProducts();
+    }
+
+    private void LoadProducts()
+    {
+        products = ProductController.GetAllProducts();
+    }
+
+    private void Register()
+    {
+        if (!ValidateFields())
+        {
+            return;
+        }
+
+        var result = ProductController.Register(BuildProduct(0));
+
+        if (!result)
+        {
+            message = "A product with this name already exists.";
+            return;
+        }
+
+        message = "Product registered successfully.";
+        LoadProducts();
+        Clear();
+    }
+
+    private void Update()
+    {
+        if (selectedProductId == 0)
+        {
+            message = "Select a product first.";
+            return;
+        }
+
+        if (!ValidateFields())
+        {
+            return;
+        }
+
+        var result = ProductController.Update(BuildProduct(selectedProductId));
+
+        if (!result)
+        {
+            message = "The product could not be updated.";
+            return;
+        }
+
+        message = "Product updated successfully.";
+        LoadProducts();
+        Clear();
+    }
+
+    private bool ValidateFields()
+    {
+        if (string.IsNullOrWhiteSpace(name) ||
+            string.IsNullOrWhiteSpace(calories) ||
+            string.IsNullOrWhiteSpace(protein) ||
+            string.IsNullOrWhiteSpace(carbs) ||
+            string.IsNullOrWhiteSpace(fat) ||
+            string.IsNullOrWhiteSpace(unit))
+        {
+            message = "All fields are required.";
+            return false;
+        }
+
+        if (!TryParseDecimal(calories, out _))
+        {
+            message = "Calories must be a valid number.";
+            return false;
+        }
+
+        if (!TryParseDecimal(protein, out _))
+        {
+            message = "Protein must be a valid number.";
+            return false;
+        }
+
+        if (!TryParseDecimal(carbs, out _))
+        {
+            message = "Carbs must be a valid number.";
+            return false;
+        }
+
+        if (!TryParseDecimal(fat, out _))
+        {
+            message = "Fat must be a valid number.";
+            return false;
+        }
+
+        message = string.Empty;
+        return true;
+    }
+
+    private Product BuildProduct(int productId)
+    {
+        return new Product(
+            productId,
+            name.Trim(),
+            ParseDecimal(calories),
+            ParseDecimal(protein),
+            ParseDecimal(carbs),
+            ParseDecimal(fat),
+            unit.Trim());
+    }
+
+    private void SelectProduct(Product product)
+    {
+        selectedProductId = product.ProductId;
+        name = product.Name;
+        calories = product.Calories.ToString(CultureInfo.InvariantCulture);
+        protein = product.Protein.ToString(CultureInfo.InvariantCulture);
+        carbs = product.Carbs.ToString(CultureInfo.InvariantCulture);
+        fat = product.Fat.ToString(CultureInfo.InvariantCulture);
+        unit = product.Unit;
+        message = string.Empty;
+    }
+
+    private void Clear()
+    {
+        selectedProductId = 0;
+        name = string.Empty;
+        calories = string.Empty;
+        protein = string.Empty;
+        carbs = string.Empty;
+        fat = string.Empty;
+        unit = string.Empty;
+    }
+
+    private void GoToMain()
+    {
+        Navigation.NavigateTo("/main");
+    }
+
+    private void GoToLogin()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private static bool TryParseDecimal(string value, out decimal result)
+    {
+        return decimal.TryParse(value.Trim(), out result) ||
+            decimal.TryParse(value.Trim(), NumberStyles.Number, CultureInfo.InvariantCulture, out result);
+    }
+
+    private static decimal ParseDecimal(string value)
+    {
+        if (decimal.TryParse(value.Trim(), out var result))
+        {
+            return result;
+        }
+
+        return decimal.Parse(value.Trim(), NumberStyles.Number, CultureInfo.InvariantCulture);
+    }
+}

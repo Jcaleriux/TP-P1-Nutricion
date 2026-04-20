@@ -11,10 +11,14 @@ builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
 builder.Services.AddScoped<SessionService>();
 builder.Services.AddScoped<LoginController>();
+builder.Services.AddScoped<ProductController>();
 builder.Services.AddScoped<IUserController, UserController>();
+builder.Services.AddScoped<IProductController, ProductController>();
 
 builder.Services.AddScoped<IRepository<User>>(sp =>
     new UserRepository(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "data", "users.csv")));
+builder.Services.AddScoped<IRepository<Product>>(sp =>
+    new ProductRepository(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "data", "products.csv")));
 
 var app = builder.Build();
 
