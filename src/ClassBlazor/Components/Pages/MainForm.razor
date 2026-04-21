@@ -17,7 +17,7 @@ else
     <p>@WelcomeMessage</p>
 
     <button @onclick="GoToProducts">Manage Products</button>
-    <button @onclick="@(() => ShowMessage("Manage Menus"))">Manage Menus</button>
+    <button @onclick="GoToMenus">Manage Menus</button>
     <button @onclick="GoToNutrition">Nutrition Info</button>
     <button @onclick="@(() => ShowMessage("Statistics"))">Statistics</button>
     <button @onclick="Logout">Cerrar sesión</button>
@@ -52,6 +52,11 @@ else
     private void GoToProducts()
     {
         Navigation.NavigateTo("/products");
+    }
+
+    private void GoToMenus()
+    {
+        Navigation.NavigateTo("/menus");
     }
 
     private void ShowMessage(string section)
