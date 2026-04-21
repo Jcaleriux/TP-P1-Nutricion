@@ -12,13 +12,19 @@ builder.Services.AddRazorComponents()
 builder.Services.AddScoped<SessionService>();
 builder.Services.AddScoped<LoginController>();
 builder.Services.AddScoped<ProductController>();
+builder.Services.AddScoped<MenuController>();
 builder.Services.AddScoped<IUserController, UserController>();
 builder.Services.AddScoped<IProductController, ProductController>();
+builder.Services.AddScoped<IMenuController, MenuController>();
 
 builder.Services.AddScoped<IRepository<User>>(sp =>
     new UserRepository(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "data", "users.csv")));
 builder.Services.AddScoped<IRepository<Product>>(sp =>
     new ProductRepository(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "data", "products.csv")));
+builder.Services.AddScoped<IRepository<Menu>>(sp =>
+    new MenuRepository(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "data", "menus.csv")));
+builder.Services.AddScoped<IRepository<MenuProduct>>(sp =>
+    new MenuProductRepository(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "data", "menuProducts.csv")));
 
 var app = builder.Build();
 
