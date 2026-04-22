@@ -19,7 +19,7 @@ else
     <button @onclick="GoToProducts">Manage Products</button>
     <button @onclick="GoToMenus">Manage Menus</button>
     <button @onclick="GoToNutrition">Nutrition Info</button>
-    <button @onclick="@(() => ShowMessage("Statistics"))">Statistics</button>
+    <button @onclick="GoToStatistics">Statistics</button>
     <button @onclick="Logout">Cerrar sesión</button>
 
     @if (!string.IsNullOrWhiteSpace(message))
@@ -59,14 +59,14 @@ else
         Navigation.NavigateTo("/menus");
     }
 
-    private void ShowMessage(string section)
-    {
-        message = $"{section} is not available yet.";
-    }
-
     private void GoToNutrition()
     {
         Navigation.NavigateTo("/nutritionInfo");
+    }
+
+    private void GoToStatistics()
+    {
+        Navigation.NavigateTo("/statistics");
     }
 
     private void Logout()

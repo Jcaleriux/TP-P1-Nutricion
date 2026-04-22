@@ -1,0 +1,252 @@
+@page "/statistics"
+
+@inject NavigationManager Navigation
+@inject SessionService SessionService
+@inject INutritionStatisticsController NutritionStatisticsController
+
+<PageTitle>Statistics</PageTitle>
+
+<h1>Statistics</h1>
+
+@if (SessionService.CurrentUser is null)
+{
+    <button @onclick="GoToLogin">Go to login</button>
+}
+else
+{
+    <div>
+        <label>Selected date</label>
+        <input type="date" value="@selectedDateText" @onchange="OnSelectedDateChanged" />
+        <button @onclick="LoadDaily">Load daily</button>
+    </div>
+
+    <p>@dailyConsumedText</p>
+    <p>@dailyGoalsText</p>
+    <p>@dailyDifferenceText</p>
+    <p>@dailyStatusText</p>
+    <p>@todayProgressText</p>
+
+    <div>
+        <label>Start date</label>
+        <input type="date" value="@startDateText" @onchange="OnStartDateChanged" />
+    </div>
+
+    <div>
+        <label>End date</label>
+        <input type="date" value="@endDateText" @onchange="OnEndDateChanged" />
+        <button @onclick="LoadRange">Load range</button>
+        <button @onclick="LoadCurrentMonth">Current month</button>
+    </div>
+
+    <p>Days with menus: @daysWithMenusText</p>
+    <p>Days goal met: @daysGoalMetText</p>
+    <p>Days goal not met: @daysGoalNotMetText</p>
+    <p>Average calories: @averageCaloriesText</p>
+    <p>@averageMacrosText</p>
+
+    <table>
+        <thead>
+            <tr>
+                <th>Date</th>
+                <th>Calories</th>
+                <th>Protein</th>
+                <th>Carbs</th>
+                <th>Fat</th>
+                <th>Status</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in rangeRows)
+            {
+                <tr>
+                    <td>@item.Date</td>
+                    <td>@item.Calories</td>
+                    <td>@item.Protein</td>
+                    <td>@item.Carbs</td>
+                    <td>@item.Fat</td>
+                    <td>@item.Status</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <button @onclick="GoToMain">Back</button>
+}
+
+@code {
+    private string selectedDateText = DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+    private string startDateText = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+    private string endDateText = DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+    private string dailyConsumedText = string.Empty;
+    private string dailyGoalsText = string.Empty;
+    private string dailyDifferenceText = string.Empty;
+    private string dailyStatusText = string.Empty;
+    private string todayProgressText = string.Empty;
+    private string daysWithMenusText = "0";
+    private string daysGoalMetText = "0";
+    private string daysGoalNotMetText = "0";
+    private string averageCaloriesText = "0.00 kcal";
+    private string averageMacrosText = string.Empty;
+    private List<RangeStatisticsGridItem> rangeRows = [];
+
+    protected override void OnInitialized()
+    {
+        if (SessionService.CurrentUser is null)
+        {
+            Navigation.NavigateTo("/");
+            return;
+        }
+
+        LoadDailyStatistics(ParseDate(selectedDateText));
+        LoadTodayProgress();
+        LoadRangeStatistics(ParseDate(startDateText), ParseDate(endDateText));
+    }
+
+    private void LoadDaily()
+    {
+        LoadDailyStatistics(ParseDate(selectedDateText));
+    }
+
+    private void LoadRange()
+    {
+        LoadRangeStatistics(ParseDate(startDateText), ParseDate(endDateText));
+    }
+
+    private void LoadCurrentMonth()
+    {
+        var currentMonthStart = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1);
+        var currentMonthEnd = currentMonthStart.AddMonths(1).AddDays(-1);
+
+        startDateText = currentMonthStart.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        endDateText = currentMonthEnd.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        LoadRangeStatistics(currentMonthStart, currentMonthEnd);
+    }
+
+    private void LoadDailyStatistics(DateTime selectedDate)
+    {
+        var dailyComparison = NutritionStatisticsController.GetDailyComparison(SessionService.CurrentUser!, selectedDate);
+
+        dailyConsumedText =
+            $"Calories: {dailyComparison.CaloriesConsumed:F2} kcal | Protein: {dailyComparison.ProteinConsumed:F2} g | Carbs: {dailyComparison.CarbsConsumed:F2} g | Fat: {dailyComparison.FatConsumed:F2} g";
+
+        dailyGoalsText =
+            $"Calories: {dailyComparison.CaloriesGoal:F2} kcal | Protein: {dailyComparison.ProteinGoal:F2} g | Carbs: {dailyComparison.CarbsGoal:F2} g | Fat: {dailyComparison.FatGoal:F2} g";
+
+        dailyDifferenceText =
+            $"Calories: {FormatDifference(dailyComparison.CaloriesDifference, "kcal")} | Protein: {FormatDifference(dailyComparison.ProteinDifference, "g")} | Carbs: {FormatDifference(dailyComparison.CarbsDifference, "g")} | Fat: {FormatDifference(dailyComparison.FatDifference, "g")}";
+
+        dailyStatusText = GetDailyStatusText(dailyComparison);
+    }
+
+    private void LoadTodayProgress()
+    {
+        var todayProgress = NutritionStatisticsController.GetTodayProgress(SessionService.CurrentUser!);
+
+        todayProgressText =
+            $"Today -> Calories: {FormatDifference(todayProgress.CaloriesDifference, "kcal")} | Protein: {FormatDifference(todayProgress.ProteinDifference, "g")} | Carbs: {FormatDifference(todayProgress.CarbsDifference, "g")} | Fat: {FormatDifference(todayProgress.FatDifference, "g")}";
+    }
+
+    private void LoadRangeStatistics(DateTime startDate, DateTime endDate)
+    {
+        var rangeSummary = NutritionStatisticsController.GetRangeSummary(SessionService.CurrentUser!, startDate, endDate);
+
+        daysWithMenusText = rangeSummary.DaysWithMenus.ToString(CultureInfo.InvariantCulture);
+        daysGoalMetText = rangeSummary.DaysGoalMet.ToString(CultureInfo.InvariantCulture);
+        daysGoalNotMetText = rangeSummary.DaysGoalNotMet.ToString(CultureInfo.InvariantCulture);
+        averageCaloriesText = $"{rangeSummary.AverageCaloriesConsumed:F2} kcal";
+        averageMacrosText =
+            $"Protein: {rangeSummary.AverageProteinConsumed:F2} g | Carbs: {rangeSummary.AverageCarbsConsumed:F2} g | Fat: {rangeSummary.AverageFatConsumed:F2} g";
+
+        rangeRows = rangeSummary.DailyComparisons
+            .Select(item => new RangeStatisticsGridItem
+            {
+                Date = item.Date.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture),
+                Calories = item.CaloriesConsumed,
+                Protein = item.ProteinConsumed,
+                Carbs = item.CarbsConsumed,
+                Fat = item.FatConsumed,
+                Status = GetRangeStatusText(item),
+            })
+            .ToList();
+    }
+
+    private void GoToMain()
+    {
+        Navigation.NavigateTo("/main");
+    }
+
+    private void GoToLogin()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private void OnSelectedDateChanged(ChangeEventArgs e)
+    {
+        selectedDateText = e.Value?.ToString() ?? DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+    }
+
+    private void OnStartDateChanged(ChangeEventArgs e)
+    {
+        startDateText = e.Value?.ToString() ?? DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+    }
+
+    private void OnEndDateChanged(ChangeEventArgs e)
+    {
+        endDateText = e.Value?.ToString() ?? DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+    }
+
+    private static DateTime ParseDate(string value)
+    {
+        return DateTime.ParseExact(value, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+    }
+
+    private static string FormatDifference(decimal difference, string unit)
+    {
+        if (difference > 0)
+        {
+            return $"Exceeded {difference:F2} {unit}";
+        }
+
+        if (difference < 0)
+        {
+            return $"Remaining {Math.Abs(difference):F2} {unit}";
+        }
+
+        return $"On target 0.00 {unit}";
+    }
+
+    private static string GetDailyStatusText(DailyNutritionComparison dailyComparison)
+    {
+        if (!dailyComparison.HasRegisteredMeals)
+        {
+            return "No meals registered";
+        }
+
+        return dailyComparison.IsGoalMet ? "Goal met" : "Goal not met";
+    }
+
+    private static string GetRangeStatusText(DailyNutritionComparison dailyComparison)
+    {
+        if (!dailyComparison.HasRegisteredMeals)
+        {
+            return "No meals";
+        }
+
+        return dailyComparison.IsGoalMet ? "Met" : "Not met";
+    }
+
+    private sealed class RangeStatisticsGridItem
+    {
+        public string Date { get; set; } = string.Empty;
+
+        public decimal Calories { get; set; }
+
+        public decimal Protein { get; set; }
+
+        public decimal Carbs { get; set; }
+
+        public decimal Fat { get; set; }
+
+        public string Status { get; set; } = string.Empty;
+    }
+}

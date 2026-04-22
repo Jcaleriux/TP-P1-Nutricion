@@ -13,6 +13,7 @@ builder.Services.AddScoped<SessionService>();
 builder.Services.AddScoped<LoginController>();
 builder.Services.AddScoped<ProductController>();
 builder.Services.AddScoped<MenuController>();
+builder.Services.AddScoped<INutritionStatisticsController, NutritionStatisticsController>();
 builder.Services.AddScoped<IUserController, UserController>();
 builder.Services.AddScoped<IProductController, ProductController>();
 builder.Services.AddScoped<IMenuController, MenuController>();
