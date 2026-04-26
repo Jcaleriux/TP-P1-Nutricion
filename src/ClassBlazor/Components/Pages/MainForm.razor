@@ -25,6 +25,10 @@ else
     <button @onclick="GoToMenus">Manage Menus</button>
     <button @onclick="GoToNutrition">Nutrition Info</button>
     <button @onclick="GoToStatistics">Statistics</button>
+    if (SessionService.CurrentUser.Role == "Admin")
+    {
+        <button @onclick="GoToUserManagement">User Management</button>
+    }
     <button @onclick="Logout">Cerrar sesión</button>
 
     @if (!string.IsNullOrWhiteSpace(message))
@@ -78,5 +82,10 @@ else
     {
         SessionService.CurrentUser = null;
         Navigation.NavigateTo("/");
+    }
+
+    private void GoToUserManagement()
+    {
+        Navigation.NavigateTo("/user-management");
     }
 }
