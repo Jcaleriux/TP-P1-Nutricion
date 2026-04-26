@@ -8,6 +8,11 @@
 
 <h1>Product Management</h1>
 
+@if (SessionService.CurrentUser?.Role != "Admin")
+{
+    <p>You don't have access to create or modify products.</p>
+}
+
 @if (SessionService.CurrentUser is null)
 {
     <button @onclick="GoToLogin">Go to login</button>
@@ -116,26 +121,43 @@ else
 
     private void Register()
     {
+        if (SessionService.CurrentUser is null)
+        {
+            message = "User not authenticated.";
+            return;
+        }
         if (!ValidateFields())
         {
             return;
         }
 
-        var result = ProductController.Register(BuildProduct(0));
-
-        if (!result)
+        try
         {
-            message = "A product with this name already exists.";
-            return;
-        }
+            var result = ProductController.Register(BuildProduct(0), SessionService.CurrentUser);
 
-        message = "Product registered successfully.";
-        LoadProducts();
-        Clear();
+            if (!result)
+            {
+                message = "A product with this name already exists.";
+                return;
+            }
+
+            message = "Product registered successfully.";
+            LoadProducts();
+            Clear();
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            message = ex.Message;
+        }
     }
 
     private void Update()
     {
+        if (SessionService.CurrentUser is null)
+        {
+            message = "User not authenticated.";
+            return;
+        }
         if (selectedProductId == 0)
         {
             message = "Select a product first.";
@@ -147,17 +169,24 @@ else
             return;
         }
 
-        var result = ProductController.Update(BuildProduct(selectedProductId));
-
-        if (!result)
+        try
         {
-            message = "The product could not be updated.";
-            return;
-        }
+            var result = ProductController.Update(BuildProduct(selectedProductId), SessionService.CurrentUser);
 
-        message = "Product updated successfully.";
-        LoadProducts();
-        Clear();
+            if (!result)
+            {
+                message = "The product could not be updated.";
+                return;
+            }
+
+            message = "Product updated successfully.";
+            LoadProducts();
+            Clear();
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            message = ex.Message;
+        }
     }
 
     private bool ValidateFields()
