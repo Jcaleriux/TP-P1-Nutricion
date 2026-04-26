@@ -5,4 +5,7 @@
     <Project Path="src/ClassModels/ClassModels.csproj" Id="4b1593b4-edc7-44c5-b900-a803a4424c10" />
     <Project Path="src/ClassViews/ClassViews.csproj" />
   </Folder>
+  <Project Path="test/ClassControllerTest/ClassControllerTest.csproj" Id="6962d334-cff7-423b-a60f-f225f56a3913">
+    <Build Solution="Debug|*" Project="false" />
+  </Project>
 </Solution>
