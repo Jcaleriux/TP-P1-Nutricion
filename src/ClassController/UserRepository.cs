@@ -58,13 +58,13 @@ namespace ClassController
         {
             var lines = new List<string>
             {
-                "UserId,Name,Email,Password,Goal,ActivityLevel,WeightKg,HeightCm,Age,Sex,DietType,Role",
+                "UserId,Name,Email,Password,Goal,ActivityLevel,WeightKg,HeightCm,Age,Sex,DietType,Role,IsActive",
             };
 
             foreach (var user in data)
             {
                 lines.Add(
-                    $"{user.UserId},{user.Name},{user.Email},{user.Password},{user.Goal},{user.ActivityLevel},{user.WeightKg},{user.HeightCm},{user.Age},{user.Sex},{user.DietType},{user.Role}");
+                    $"{user.UserId},{user.Name},{user.Email},{user.Password},{user.Goal},{user.ActivityLevel},{user.WeightKg},{user.HeightCm},{user.Age},{user.Sex},{user.DietType},{user.Role},{user.IsActive}");
             }
 
             File.WriteAllLines(this.filePath, lines);
