@@ -4,13 +4,45 @@
 @inject NavigationManager Navigation
 @inject SessionService sessionService
 
-<h3>Login</h3>
+<PageTitle>Login</PageTitle>
+<HeadContent>
+    <link rel="stylesheet" href="/css/LoginView.css" />
+</HeadContent>
 
-<input placeholder="Email" @bind="email" />
-<input type="password" placeholder="Password" @bind="password" />
-
-<button @onclick="Login">Ingresar</button>
-<button @onclick="GoToRegister">Registrarse</button>
+<main class="login-page d-flex align-items-center py-4 bg-body-tertiary min-vh-100">
+    <div class="form-signin w-100 m-auto">
+        <form>
+            <img class="mb-4" src="/images/logo.png" alt="Logo de la aplicacion" width="250" height="250" />
+            <h1 class="h3 mb-3 fw-normal">Please sign in</h1>
+            <div class="form-floating">
+                <input @bind="email" type="email" class="form-control" id="floatingInput"
+                       placeholder="name@example.com" />
+                <label for="floatingInput">Email address</label>
+            </div>
+            <div class="form-floating">
+                <input @bind="password" type="password" class="form-control" id="floatingPassword"
+                       placeholder="Password" />
+                <label for="floatingPassword">Password</label>
+            </div>
+            <div class="form-check text-start my-3">
+                <input class="form-check-input" type="checkbox" value="remember-me" id="checkDefault" />
+                <label class="form-check-label" for="checkDefault">
+                    Remember me
+                </label>
+            </div>
+            <button @onclick="Login" class="btn btn-success w-100 py-2 mb-2" type="button">
+                Sign In
+            </button>
+            <button @onclick="GoToRegister" class="btn btn-outline-secondary w-100 py-2" type="button">
+                Register
+            </button>
+            <p class="mt-5 mb-3 text-body-secondary">Proyecto Final
+                <br> Tecnicas de programación 1Q 2026
+                <br> Jordy Sibaja & José Calero
+            </p>
+        </form>
+    </div>
+</main>
 
 @if (!string.IsNullOrEmpty(message))
 {
@@ -18,9 +50,9 @@
 }
 
 @code {
-    private string email ="";
-    private string password ="";
-    private string message ="";
+    private string email = "";
+    private string password = "";
+    private string message = "";
 
     private void Login()
     {
