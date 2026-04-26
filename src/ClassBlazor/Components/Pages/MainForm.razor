@@ -7,6 +7,11 @@
 
 <h1>Nutrition For Everyone</h1>
 
+@if (SessionService.CurrentUser?.Role == "Admin")
+{
+    <p>Modo administrador</p>
+}
+
 @if (SessionService.CurrentUser is null)
 {
     <p>Welcome</p>

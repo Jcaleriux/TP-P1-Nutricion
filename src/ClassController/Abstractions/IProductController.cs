@@ -21,7 +21,7 @@ namespace ClassController.Abstractions
         /// </summary>
         /// <param name="product">The product to register. Cannot be null.</param>
         /// <returns>true if the product was successfully registered; otherwise, false.</returns>
-        public bool Register(Product product);
+        public bool Register(Product product, User user);
 
         /// <summary>
         /// Updates the specified product in the data store.
@@ -29,6 +29,6 @@ namespace ClassController.Abstractions
         /// <param name="product">The product to update. Cannot be null. The product must have a valid identifier corresponding to an existing
         /// entry.</param>
         /// <returns>true if the product was successfully updated; otherwise, false.</returns>
-        public bool Update(Product product);
+        public bool Update(Product product, User user);
     }
 }
