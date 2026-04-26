@@ -46,7 +46,7 @@
 
 @if (!string.IsNullOrEmpty(message))
 {
-    <p>@message</p>
+    <p style="color:red">@message</p>
 }
 
 @code {
@@ -72,6 +72,6 @@
 
     private void GoToRegister()
     {
-        Navigation.NavigateTo("/register");
+        Navigation.NavigateTo("/Register");
     }
 }

@@ -37,8 +37,12 @@
         /// </summary>
         /// <param name="product">The product to register.</param>
         /// <returns>True if the product is registered successfully; otherwise, false.</returns>
-        public bool Register(Product product)
+        public bool Register(Product product, User user)
         {
+            if (user.Role != "Admin")
+            {
+                throw new UnauthorizedAccessException("Only admin can create products");
+            }
             if (this.ExistsProductName(product.Name, 0))
             {
                 return false;
@@ -55,8 +59,12 @@
         /// </summary>
         /// <param name="product">The product with updated data.</param>
         /// <returns>True if the product is updated successfully; otherwise, false.</returns>
-        public bool Update(Product product)
+        public bool Update(Product product, User user)
         {
+            if (user.Role != "Admin")
+            {
+                throw new UnauthorizedAccessException("Only admin can update products");
+            }
             var existingProduct = this.products
                 .FirstOrDefault(item => item.ProductId == product.ProductId);
 

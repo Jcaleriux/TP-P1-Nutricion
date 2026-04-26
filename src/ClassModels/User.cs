@@ -19,6 +19,8 @@
         /// <param name="Age">The age.</param>
         /// <param name="Sex">The sex.</param>
         /// <param name="DietType">Type of the diet.</param>
+        ///  <param name="Role">The role.</param>
+        ///  <param name="IsActive">Indicates whether the user is active.</param>
         public User( 
             int UserId, 
             string Name,
@@ -30,7 +32,9 @@
             decimal HeightCm,
             int Age,
             string Sex,
-            string DietType
+            string DietType,
+            string Role = "User",
+            bool IsActive = true
             ) 
         { 
             this.UserId = UserId;
@@ -44,6 +48,8 @@
             this.Age = Age;
             this.Sex = Sex;
             this.DietType = DietType;
+            this.Role = Role;
+            this.IsActive = IsActive;
         }
 
         /// <summary>
@@ -63,6 +69,8 @@
             this.Age = int.Parse(userData[8]);
             this.Sex = userData[9];
             this.DietType = userData[10];
+            this.Role = userData.Length > 11 ? userData[11] : "User";
+            this.IsActive = userData.Length <= 12 || bool.Parse(userData[12]);
         }
 
         /// <summary>
@@ -152,5 +160,19 @@
         /// The type of the diet.
         /// </value>
         public string DietType { get; set; }
+        /// <summary>
+        /// Gets or sets the role.
+        /// </summary>
+        /// <value>
+        /// The role.
+        /// </value>
+        public string Role { get; set; } = "User";
+        /// <summary>
+        /// Gets or sets a value indicating whether the entity is active.
+        /// </summary>
+        /// <value>
+        /// <c>true</c> if the entity is active; otherwise, <c>false</c>.
+        /// </value>
+        public bool IsActive { get; set; } = true;
     }
 }

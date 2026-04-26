@@ -1,5 +1,91 @@
-﻿<h3>MainView</h3>
+@page "/main"
+
+@inject NavigationManager Navigation
+@inject SessionService SessionService
+
+<PageTitle>Main Form</PageTitle>
+
+<h1>Nutrition For Everyone</h1>
+
+@if (SessionService.CurrentUser?.Role == "Admin")
+{
+    <p>Modo administrador</p>
+}
+
+@if (SessionService.CurrentUser is null)
+{
+    <p>Welcome</p>
+    <button @onclick="GoToLogin">Go to login</button>
+}
+else
+{
+    <p>@WelcomeMessage</p>
+
+    <button @onclick="GoToProducts">Manage Products</button>
+    <button @onclick="GoToMenus">Manage Menus</button>
+    <button @onclick="GoToNutrition">Nutrition Info</button>
+    <button @onclick="GoToStatistics">Statistics</button>
+    if (SessionService.CurrentUser.Role == "Admin")
+    {
+        <button @onclick="GoToUserManagement">User Management</button>
+    }
+    <button @onclick="Logout">Cerrar sesión</button>
+
+    @if (!string.IsNullOrWhiteSpace(message))
+    {
+        <p>@message</p>
+    }
+}
 
 @code {
+    private string message = string.Empty;
 
+    private string WelcomeMessage =>
+        SessionService.CurrentUser is null
+            ? "Welcome"
+            : $"Welcome {SessionService.CurrentUser.Name}";
+
+    protected override void OnInitialized()
+    {
+        if (SessionService.CurrentUser is null)
+        {
+            Navigation.NavigateTo("/");
+        }
+    }
+
+    private void GoToLogin()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private void GoToProducts()
+    {
+        Navigation.NavigateTo("/products");
+    }
+
+    private void GoToMenus()
+    {
+        Navigation.NavigateTo("/menus");
+    }
+
+    private void GoToNutrition()
+    {
+        Navigation.NavigateTo("/nutritionInfo");
+    }
+
+    private void GoToStatistics()
+    {
+        Navigation.NavigateTo("/statistics");
+    }
+
+    private void Logout()
+    {
+        SessionService.CurrentUser = null;
+        Navigation.NavigateTo("/");
+    }
+
+    private void GoToUserManagement()
+    {
+        Navigation.NavigateTo("/user-management");
+    }
 }

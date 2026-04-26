@@ -1,0 +1,442 @@
+@page "/menus"
+
+@inject MenuController MenuController
+@inject ProductController ProductController
+@inject NavigationManager Navigation
+@inject SessionService SessionService
+
+<PageTitle>Menu Management</PageTitle>
+
+<h1>Menu Management</h1>
+
+@if (SessionService.CurrentUser is null)
+{
+    <button @onclick="GoToLogin">Go to login</button>
+}
+else
+{
+    <div>
+        <label>Date</label>
+        <input type="date" value="@menuDateText" @onchange="OnMenuDateChanged" />
+    </div>
+
+    <div>
+        <label>Meal time</label>
+        <select @bind="selectedMealTime">
+            @foreach (var mealTime in mealTimes)
+            {
+                <option value="@mealTime">@mealTime</option>
+            }
+        </select>
+    </div>
+
+    <div>
+        <label>Product</label>
+        <select @bind="selectedProductId">
+            <option value="0">Select a product</option>
+            @foreach (var product in products)
+            {
+                <option value="@product.ProductId">@product.Name</option>
+            }
+        </select>
+    </div>
+
+    <div>
+        <label>Quantity</label>
+        <input @bind="quantityText" />
+    </div>
+
+    <button @onclick="AddProduct">Add product</button>
+    <button @onclick="RemoveProduct" disabled="@(selectedPendingProductIndex < 0)">Remove product</button>
+    <button @onclick="CreateMenu">Create</button>
+    <button @onclick="UpdateMenu" disabled="@(selectedMenuId == 0)">Update</button>
+    <button @onclick="DeleteMenu" disabled="@(selectedMenuId == 0)">Delete</button>
+    <button @onclick="Clear">Clear</button>
+    <button @onclick="GoToMain">Back</button>
+
+    @if (!string.IsNullOrWhiteSpace(message))
+    {
+        <p>@message</p>
+    }
+
+    <p>@TotalsText</p>
+
+    <h2>Menus</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Date</th>
+                <th>Calories</th>
+                <th>Protein</th>
+                <th>Carbs</th>
+                <th>Fat</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var menu in menus)
+            {
+                <tr>
+                    <td>@menu.MenuId</td>
+                    <td>@menu.Date</td>
+                    <td>@menu.Calories</td>
+                    <td>@menu.Protein</td>
+                    <td>@menu.Carbs</td>
+                    <td>@menu.Fat</td>
+                    <td>
+                        <button @onclick="@(() => SelectMenu(menu.MenuId))">Select</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+
+    <h2>Selected Products</h2>
+    <table>
+        <thead>
+            <tr>
+                <th>Meal Time</th>
+                <th>Product</th>
+                <th>Quantity</th>
+                <th>Calories</th>
+                <th>Protein</th>
+                <th>Carbs</th>
+                <th>Fat</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @for (var index = 0; index < pendingProductRows.Count; index++)
+            {
+                var row = pendingProductRows[index];
+                <tr>
+                    <td>@row.MealTime</td>
+                    <td>@row.ProductName</td>
+                    <td>@row.Quantity</td>
+                    <td>@row.Calories</td>
+                    <td>@row.Protein</td>
+                    <td>@row.Carbs</td>
+                    <td>@row.Fat</td>
+                    <td>
+                        <button @onclick="@(() => SelectPendingProduct(index))">Select</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private readonly string[] mealTimes = ["Breakfast", "Snack", "Lunch", "Dinner"];
+    private readonly List<MenuProduct> pendingMenuProducts = [];
+    private List<Product> products = [];
+    private List<MenuGridItem> menus = [];
+    private List<PendingProductGridItem> pendingProductRows = [];
+    private int selectedMenuId;
+    private int selectedPendingProductIndex = -1;
+    private int selectedProductId;
+    private string selectedMealTime = "Breakfast";
+    private string quantityText = string.Empty;
+    private string menuDateText = DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+    private string message = string.Empty;
+
+    private string TotalsText
+    {
+        get
+        {
+            var totals = MenuController.CalculateTotals(pendingMenuProducts);
+            return $"Totals - Calories: {totals.Calories:F2} | Protein: {totals.Protein:F2} | Carbs: {totals.Carbs:F2} | Fat: {totals.Fat:F2}";
+        }
+    }
+
+    protected override void OnInitialized()
+    {
+        if (SessionService.CurrentUser is null)
+        {
+            Navigation.NavigateTo("/");
+            return;
+        }
+
+        LoadProducts();
+        LoadMenus();
+        LoadPendingProducts();
+    }
+
+    private void LoadProducts()
+    {
+        products = ProductController.GetAllProducts();
+    }
+
+    private void LoadMenus()
+    {
+        menus = MenuController
+            .GetMenusByUser(SessionService.CurrentUser!.UserId)
+            .Select(menu =>
+            {
+                var menuProducts = MenuController.GetMenuProducts(menu.MenuId);
+                var totals = MenuController.CalculateTotals(menuProducts);
+
+                return new MenuGridItem
+                {
+                    MenuId = menu.MenuId,
+                    Date = menu.Date.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture),
+                    Calories = totals.Calories,
+                    Protein = totals.Protein,
+                    Carbs = totals.Carbs,
+                    Fat = totals.Fat,
+                };
+            })
+            .ToList();
+    }
+
+    private void LoadPendingProducts()
+    {
+        pendingProductRows = pendingMenuProducts
+            .Select(menuProduct =>
+            {
+                var product = products.FirstOrDefault(item => item.ProductId == menuProduct.ProductId);
+
+                return new PendingProductGridItem
+                {
+                    MealTime = menuProduct.MealTime,
+                    ProductName = product?.Name ?? "Unknown",
+                    Quantity = menuProduct.Quantity,
+                    Calories = (product?.Calories ?? 0) * menuProduct.Quantity,
+                    Protein = (product?.Protein ?? 0) * menuProduct.Quantity,
+                    Carbs = (product?.Carbs ?? 0) * menuProduct.Quantity,
+                    Fat = (product?.Fat ?? 0) * menuProduct.Quantity,
+                };
+            })
+            .ToList();
+    }
+
+    private void AddProduct()
+    {
+        if (selectedProductId == 0)
+        {
+            message = "Select a product.";
+            return;
+        }
+
+        if (!TryParseDecimal(quantityText, out var quantity) || quantity <= 0)
+        {
+            message = "Quantity must be a valid number greater than zero.";
+            return;
+        }
+
+        pendingMenuProducts.Add(new MenuProduct(0, 0, selectedMealTime, selectedProductId, quantity));
+        selectedPendingProductIndex = -1;
+        selectedProductId = 0;
+        quantityText = string.Empty;
+        message = string.Empty;
+        LoadPendingProducts();
+    }
+
+    private void CreateMenu()
+    {
+        if (pendingMenuProducts.Count == 0)
+        {
+            message = "Add at least one product to the menu.";
+            return;
+        }
+
+        var result = MenuController.CreateMenu(
+            SessionService.CurrentUser!.UserId,
+            ParseDate(menuDateText),
+            pendingMenuProducts);
+
+        if (!result)
+        {
+            message = "The menu could not be created.";
+            return;
+        }
+
+        message = "Menu created successfully.";
+        LoadMenus();
+        ResetEditor();
+    }
+
+    private void UpdateMenu()
+    {
+        if (selectedMenuId == 0)
+        {
+            message = "Select a menu first.";
+            return;
+        }
+
+        if (pendingMenuProducts.Count == 0)
+        {
+            message = "Add at least one product to the menu.";
+            return;
+        }
+
+        var result = MenuController.UpdateMenu(selectedMenuId, ParseDate(menuDateText), pendingMenuProducts);
+
+        if (!result)
+        {
+            message = "The menu could not be updated.";
+            return;
+        }
+
+        message = "Menu updated successfully.";
+        LoadMenus();
+        ResetEditor();
+    }
+
+    private void DeleteMenu()
+    {
+        if (selectedMenuId == 0)
+        {
+            message = "Select a menu first.";
+            return;
+        }
+
+        var result = MenuController.DeleteMenu(selectedMenuId);
+
+        if (!result)
+        {
+            message = "The menu could not be deleted.";
+            return;
+        }
+
+        message = "Menu deleted successfully.";
+        LoadMenus();
+        ResetEditor();
+    }
+
+    private void SelectMenu(int menuId)
+    {
+        var menu = MenuController
+            .GetMenusByUser(SessionService.CurrentUser!.UserId)
+            .FirstOrDefault(item => item.MenuId == menuId);
+
+        if (menu is null)
+        {
+            return;
+        }
+
+        selectedMenuId = menuId;
+        selectedPendingProductIndex = -1;
+        menuDateText = menu.Date.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        pendingMenuProducts.Clear();
+
+        foreach (var menuProduct in MenuController.GetMenuProducts(menuId))
+        {
+            pendingMenuProducts.Add(new MenuProduct(0, 0, menuProduct.MealTime, menuProduct.ProductId, menuProduct.Quantity));
+        }
+
+        selectedMealTime = mealTimes[0];
+        selectedProductId = 0;
+        quantityText = string.Empty;
+        message = string.Empty;
+        LoadPendingProducts();
+    }
+
+    private void SelectPendingProduct(int index)
+    {
+        if (index < 0 || index >= pendingMenuProducts.Count)
+        {
+            return;
+        }
+
+        selectedPendingProductIndex = index;
+        var selectedProduct = pendingMenuProducts[index];
+        selectedMealTime = selectedProduct.MealTime;
+        selectedProductId = selectedProduct.ProductId;
+        quantityText = selectedProduct.Quantity.ToString(CultureInfo.InvariantCulture);
+        message = string.Empty;
+    }
+
+    private void RemoveProduct()
+    {
+        if (selectedPendingProductIndex < 0 || selectedPendingProductIndex >= pendingMenuProducts.Count)
+        {
+            message = "Select a product from the selected products table first.";
+            return;
+        }
+
+        pendingMenuProducts.RemoveAt(selectedPendingProductIndex);
+        selectedPendingProductIndex = -1;
+        selectedProductId = 0;
+        quantityText = string.Empty;
+        message = string.Empty;
+        LoadPendingProducts();
+    }
+
+    private void Clear()
+    {
+        ResetEditor();
+        message = string.Empty;
+    }
+
+    private void ResetEditor()
+    {
+        selectedMenuId = 0;
+        selectedPendingProductIndex = -1;
+        selectedProductId = 0;
+        selectedMealTime = mealTimes[0];
+        quantityText = string.Empty;
+        menuDateText = DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        pendingMenuProducts.Clear();
+        LoadPendingProducts();
+    }
+
+    private void GoToMain()
+    {
+        Navigation.NavigateTo("/main");
+    }
+
+    private void GoToLogin()
+    {
+        Navigation.NavigateTo("/");
+    }
+
+    private void OnMenuDateChanged(ChangeEventArgs e)
+    {
+        menuDateText = e.Value?.ToString() ?? DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+    }
+
+    private static bool TryParseDecimal(string value, out decimal result)
+    {
+        return decimal.TryParse(value.Trim(), out result) ||
+            decimal.TryParse(value.Trim(), NumberStyles.Number, CultureInfo.InvariantCulture, out result);
+    }
+
+    private static DateTime ParseDate(string value)
+    {
+        return DateTime.ParseExact(value, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+    }
+
+    private sealed class MenuGridItem
+    {
+        public int MenuId { get; set; }
+
+        public string Date { get; set; } = string.Empty;
+
+        public decimal Calories { get; set; }
+
+        public decimal Protein { get; set; }
+
+        public decimal Carbs { get; set; }
+
+        public decimal Fat { get; set; }
+    }
+
+    private sealed class PendingProductGridItem
+    {
+        public string MealTime { get; set; } = string.Empty;
+
+        public string ProductName { get; set; } = string.Empty;
+
+        public decimal Quantity { get; set; }
+
+        public decimal Calories { get; set; }
+
+        public decimal Protein { get; set; }
+
+        public decimal Carbs { get; set; }
+
+        public decimal Fat { get; set; }
+    }
+}

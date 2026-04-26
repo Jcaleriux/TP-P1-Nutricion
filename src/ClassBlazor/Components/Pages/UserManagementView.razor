@@ -1,0 +1,146 @@
+﻿@page "/user-management"
+@inject SessionService SessionService
+@inject NavigationManager Navigation
+@inject IUserController UserController
+
+
+@if (SessionService.CurrentUser?.Role != "Admin")
+{
+    <p>Access denied</p>
+}
+else
+{
+    <h3>User Management</h3>
+    <table>
+        <thead>
+            <tr>
+                <th>Name</th>
+                <th>Email</th>
+                <th>Role</th>
+                <th>Status</th>
+                <th>Actions</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var user in users)
+            {
+                <tr>
+                    <td>@user.Name</td>
+                    <td>@user.Email</td>
+                    <td>@user.Role</td>
+                    <td>@(user.IsActive ? "Active" : "Inactive")</td>
+                    <td>
+                        <input type="password" placeholder="New password" @bind="passwords[user.UserId]" />
+                        <button @onclick="() => ResetPassword(user.UserId)">
+                            Reset Password
+                        </button>
+                        @if (user.IsActive)
+                        {
+                            <button @onclick="() => DeactivateUser(user.UserId)">Deactivate</button>
+                        }
+                        else
+                        {
+                            <button @onclick="() => ActivateUser(user.UserId)">Activate</button>
+                        }
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
+    @if (!string.IsNullOrEmpty(message))
+    {
+        <p>@message</p>
+    }
+    <button @onclick="GoToMain">Back to Main</button>
+}
+
+@code {
+    private List<User> users = new();
+    private string message = "";
+    private Dictionary<int, string> passwords = new();
+
+    protected override void OnInitialized()
+    {
+        if (SessionService.CurrentUser is null)
+        {
+            Navigation.NavigateTo("/");
+            return;
+        }
+
+        if (SessionService.CurrentUser.Role != "Admin")
+        {
+            return;
+        }
+
+        users = UserController.GetAllUsers();
+
+        foreach (var user in users)
+        {
+            if (!passwords.ContainsKey(user.UserId))
+            {
+                passwords[user.UserId] = "";
+            }
+        }
+    }
+
+    private void ResetPassword(int userId)
+    {
+        try
+        {
+            if (!passwords.ContainsKey(userId) || string.IsNullOrWhiteSpace(passwords[userId]))
+            {
+                message = "Please enter a password.";
+                return;
+            }
+
+            var result = UserController.ResetPassword(
+                userId,
+                passwords[userId],
+                SessionService.CurrentUser!
+            );
+
+            message = result ? "Password reset" : "User not found";
+
+            passwords[userId] = ""; // limpiar input
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            message = ex.Message;
+        }
+    }
+
+    private void DeactivateUser(int userId)
+    {
+        try
+        {
+            var result = UserController.DeactivateUser(userId, SessionService.CurrentUser!);
+
+            message = result ? "User deactivated" : "User not found";
+
+            users = UserController.GetAllUsers();
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            message = ex.Message;
+        }
+    }
+
+    private void ActivateUser(int userId)
+    {
+        try
+        {
+            var result = UserController.ActivateUser(userId, SessionService.CurrentUser!);
+            message = result ? "User activated" : "User not found";
+            users = UserController.GetAllUsers();
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            message = ex.Message;
+        }
+    }
+
+    private void GoToMain()
+    {
+        Navigation.NavigateTo("/main");
+    }
+}
