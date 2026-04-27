@@ -58,13 +58,13 @@ namespace ClassController
         {
             var lines = new List<string>
             {
-                "ProductId,Name,Calories,Protein,Carbs,Fat,Unit",
+                "ProductId,Name,Calories,Protein,Carbs,Fat,Unit,IsActive",
             };
 
             foreach (var product in data)
             {
                 lines.Add(
-                    $"{product.ProductId},{product.Name},{product.Calories.ToString(CultureInfo.InvariantCulture)},{product.Protein.ToString(CultureInfo.InvariantCulture)},{product.Carbs.ToString(CultureInfo.InvariantCulture)},{product.Fat.ToString(CultureInfo.InvariantCulture)},{product.Unit}");
+                    $"{product.ProductId},{product.Name},{product.Calories.ToString(CultureInfo.InvariantCulture)},{product.Protein.ToString(CultureInfo.InvariantCulture)},{product.Carbs.ToString(CultureInfo.InvariantCulture)},{product.Fat.ToString(CultureInfo.InvariantCulture)},{product.Unit},{product.IsActive}");
             }
 
             File.WriteAllLines(this.filePath, lines);

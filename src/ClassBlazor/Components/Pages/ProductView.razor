@@ -1,100 +1,144 @@
-@page "/products"
-
 @inject ProductController ProductController
-@inject NavigationManager Navigation
 @inject SessionService SessionService
-
-<PageTitle>Product Management</PageTitle>
 
 <h1>Product Management</h1>
 
-@if (SessionService.CurrentUser?.Role != "Admin")
-{
-    <p>You don't have access to create or modify products.</p>
-}
-
 @if (SessionService.CurrentUser is null)
 {
-    <button @onclick="GoToLogin">Go to login</button>
+    <p>Redirecting...</p>
 }
 else
 {
-    <div>
-        <label>Name</label>
-        <input @bind="name" />
-    </div>
+    <div class="product-management-shell">
+        @if (!IsAdmin)
+        {
+            <p class="product-management-note">You can view active products, but only admins can register, update, enable or disable them.</p>
+        }
 
-    <div>
-        <label>Calories</label>
-        <input @bind="calories" />
-    </div>
+        @if (IsAdmin)
+        {
+            <section class="product-management-form">
+                <h2 class="h3 mb-3 fw-normal">Product Management</h2>
 
-    <div>
-        <label>Protein</label>
-        <input @bind="protein" />
-    </div>
+                <div class="product-management-fields">
+                    <div class="form-floating">
+                        <input @bind="name" type="text" class="form-control" id="productName" placeholder="Chicken breast" />
+                        <label for="productName">Name</label>
+                    </div>
 
-    <div>
-        <label>Carbs</label>
-        <input @bind="carbs" />
-    </div>
+                    <div class="form-floating">
+                        <input @bind="calories" type="text" class="form-control" id="productCalories" placeholder="165" />
+                        <label for="productCalories">Calories</label>
+                    </div>
 
-    <div>
-        <label>Fat</label>
-        <input @bind="fat" />
-    </div>
+                    <div class="form-floating">
+                        <input @bind="protein" type="text" class="form-control" id="productProtein" placeholder="31" />
+                        <label for="productProtein">Protein</label>
+                    </div>
 
-    <div>
-        <label>Unit</label>
-        <input @bind="unit" />
-    </div>
+                    <div class="form-floating">
+                        <input @bind="carbs" type="text" class="form-control" id="productCarbs" placeholder="0" />
+                        <label for="productCarbs">Carbs</label>
+                    </div>
 
-    <button @onclick="Register">Register</button>
-    <button @onclick="Update" disabled="@(selectedProductId == 0)">Update</button>
-    <button @onclick="Clear">Clear</button>
-    <button @onclick="GoToMain">Back</button>
+                    <div class="form-floating">
+                        <input @bind="fat" type="text" class="form-control" id="productFat" placeholder="3.6" />
+                        <label for="productFat">Fat</label>
+                    </div>
 
-    @if (!string.IsNullOrWhiteSpace(message))
-    {
-        <p>@message</p>
-    }
+                    <div class="form-floating">
+                        <input @bind="unit" type="text" class="form-control" id="productUnit" placeholder="100g" />
+                        <label for="productUnit">Unit</label>
+                    </div>
+                </div>
 
-    <table>
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Name</th>
-                <th>Calories</th>
-                <th>Protein</th>
-                <th>Carbs</th>
-                <th>Fat</th>
-                <th>Unit</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var product in products)
+                <div class="product-management-actions mt-4">
+                    <button @onclick="Register" class="btn btn-success w-100 py-2" type="button">Register</button>
+                    <button @onclick="Update" class="btn btn-outline-success w-100 py-2" type="button" disabled="@(selectedProductId == 0)">Update</button>
+                    <button @onclick="ToggleProductStatus" class="btn btn-outline-success w-100 py-2" type="button" disabled="@(selectedProductId == 0)">
+                        @(selectedProductIsActive ? "Disable" : "Enable")
+                    </button>
+                    <button @onclick="Clear" class="btn btn-outline-secondary w-100 py-2" type="button">Clear</button>
+                </div>
+
+                @if (!string.IsNullOrWhiteSpace(message))
+                {
+                    <p class="product-management-message mt-3 mb-0">@message</p>
+                }
+            </section>
+        }
+        else if (!string.IsNullOrWhiteSpace(message))
+        {
+            <p class="product-management-message mt-3 mb-0">@message</p>
+        }
+
+        <section class="product-management-table-section">
+            <table class="table table-striped product-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Calories</th>
+                        <th>Protein</th>
+                        <th>Carbs</th>
+                        <th>Fat</th>
+                        <th>Unit</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var product in PagedProducts)
+                    {
+                        <tr class="@GetRowClass(product)" @onclick="@(() => HandleRowClick(product))">
+                            <td>@product.Name</td>
+                            <td>@product.Calories</td>
+                            <td>@product.Protein</td>
+                            <td>@product.Carbs</td>
+                            <td>@product.Fat</td>
+                            <td>@product.Unit</td>
+                            <td>@(product.IsActive ? "Active" : "Inactive")</td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+
+            @if (TotalPages > 1)
             {
-                <tr>
-                    <td>@product.ProductId</td>
-                    <td>@product.Name</td>
-                    <td>@product.Calories</td>
-                    <td>@product.Protein</td>
-                    <td>@product.Carbs</td>
-                    <td>@product.Fat</td>
-                    <td>@product.Unit</td>
-                    <td>
-                        <button @onclick="@(() => SelectProduct(product))">Select</button>
-                    </td>
-                </tr>
+                <nav aria-label="Product pagination" class="product-pagination-nav">
+                    <ul class="pagination product-pagination">
+                        <li class="page-item @(CurrentPage == 1 ? "disabled" : string.Empty)">
+                            <button type="button" class="page-link" @onclick="GoToPreviousPage" disabled="@(CurrentPage == 1)">Previous</button>
+                        </li>
+
+                        @for (var pageNumber = 1; pageNumber <= TotalPages; pageNumber++)
+                        {
+                            var currentPageNumber = pageNumber;
+
+                            <li class="page-item @(CurrentPage == currentPageNumber ? "active" : string.Empty)">
+                                <button
+                                    type="button"
+                                    class="page-link"
+                                    aria-current="@(CurrentPage == currentPageNumber ? "page" : null)"
+                                    @onclick="@(() => GoToPage(currentPageNumber))">
+                                    @currentPageNumber
+                                </button>
+                            </li>
+                        }
+
+                        <li class="page-item @(CurrentPage == TotalPages ? "disabled" : string.Empty)">
+                            <button type="button" class="page-link" @onclick="GoToNextPage" disabled="@(CurrentPage == TotalPages)">Next</button>
+                        </li>
+                    </ul>
+                </nav>
             }
-        </tbody>
-    </table>
+        </section>
+    </div>
 }
 
 @code {
     private List<Product> products = [];
+    private const int PageSize = 10;
     private int selectedProductId;
+    private int CurrentPage { get; set; } = 1;
     private string name = string.Empty;
     private string calories = string.Empty;
     private string protein = string.Empty;
@@ -102,12 +146,17 @@ else
     private string fat = string.Empty;
     private string unit = string.Empty;
     private string message = string.Empty;
+    private bool selectedProductIsActive = true;
+    private bool IsAdmin => SessionService.CurrentUser?.Role == "Admin";
+    private int TotalPages => Math.Max(1, (int)Math.Ceiling(products.Count / (double)PageSize));
+    private IEnumerable<Product> PagedProducts => products
+        .Skip((CurrentPage - 1) * PageSize)
+        .Take(PageSize);
 
     protected override void OnInitialized()
     {
         if (SessionService.CurrentUser is null)
         {
-            Navigation.NavigateTo("/");
             return;
         }
 
@@ -116,7 +165,10 @@ else
 
     private void LoadProducts()
     {
-        products = ProductController.GetAllProducts();
+        products = IsAdmin
+            ? ProductController.GetAllProducts()
+            : ProductController.GetActiveProducts();
+        EnsureCurrentPageIsValid();
     }
 
     private void Register()
@@ -239,7 +291,8 @@ else
             ParseDecimal(protein),
             ParseDecimal(carbs),
             ParseDecimal(fat),
-            unit.Trim());
+            unit.Trim(),
+            selectedProductId == 0 ? true : selectedProductIsActive);
     }
 
     private void SelectProduct(Product product)
@@ -251,12 +304,24 @@ else
         carbs = product.Carbs.ToString(CultureInfo.InvariantCulture);
         fat = product.Fat.ToString(CultureInfo.InvariantCulture);
         unit = product.Unit;
+        selectedProductIsActive = product.IsActive;
         message = string.Empty;
+    }
+
+    private void HandleRowClick(Product product)
+    {
+        if (!IsAdmin)
+        {
+            return;
+        }
+
+        SelectProduct(product);
     }
 
     private void Clear()
     {
         selectedProductId = 0;
+        selectedProductIsActive = true;
         name = string.Empty;
         calories = string.Empty;
         protein = string.Empty;
@@ -265,14 +330,87 @@ else
         unit = string.Empty;
     }
 
-    private void GoToMain()
+    private string GetRowClass(Product product)
     {
-        Navigation.NavigateTo("/main");
+        var rowClass = selectedProductId == product.ProductId
+            ? "product-row product-row-selected"
+            : "product-row";
+
+        if (!product.IsActive)
+        {
+            rowClass += " product-row-inactive";
+        }
+
+        if (!IsAdmin)
+        {
+            return rowClass;
+        }
+
+        return rowClass;
     }
 
-    private void GoToLogin()
+    private void ToggleProductStatus()
     {
-        Navigation.NavigateTo("/");
+        if (SessionService.CurrentUser is null)
+        {
+            message = "User not authenticated.";
+            return;
+        }
+
+        if (selectedProductId == 0)
+        {
+            message = "Select a product first.";
+            return;
+        }
+
+        try
+        {
+            var result = selectedProductIsActive
+                ? ProductController.DeactivateProduct(selectedProductId, SessionService.CurrentUser)
+                : ProductController.ActivateProduct(selectedProductId, SessionService.CurrentUser);
+
+            if (!result)
+            {
+                message = "The product status could not be updated.";
+                return;
+            }
+
+            message = selectedProductIsActive
+                ? "Product disabled successfully."
+                : "Product enabled successfully.";
+            LoadProducts();
+            Clear();
+        }
+        catch (UnauthorizedAccessException ex)
+        {
+            message = ex.Message;
+        }
+    }
+
+    private void GoToPage(int pageNumber)
+    {
+        CurrentPage = Math.Clamp(pageNumber, 1, TotalPages);
+    }
+
+    private void GoToPreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
+        }
+    }
+
+    private void GoToNextPage()
+    {
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+    private void EnsureCurrentPageIsValid()
+    {
+        CurrentPage = Math.Clamp(CurrentPage, 1, TotalPages);
     }
 
     private static bool TryParseDecimal(string value, out decimal result)

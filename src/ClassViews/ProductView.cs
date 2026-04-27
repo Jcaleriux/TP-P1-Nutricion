@@ -10,16 +10,20 @@
     public partial class ProductView : Form
     {
         private readonly ProductController productController;
+        private readonly User currentUser;
         private int selectedProductId;
+        private bool selectedProductIsActive = true;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductView"/> class.
         /// </summary>
         /// <param name="productController">The product controller.</param>
-        public ProductView(ProductController productController)
+        /// <param name="currentUser">The authenticated user.</param>
+        public ProductView(ProductController productController, User currentUser)
         {
             this.InitializeComponent();
             this.productController = productController;
+            this.currentUser = currentUser;
         }
 
         /// <summary>
@@ -33,7 +37,9 @@
         private void LoadProducts()
         {
             this.dgvProducts.DataSource = null;
-            this.dgvProducts.DataSource = this.productController.GetAllProducts();
+            this.dgvProducts.DataSource = this.currentUser.Role == "Admin"
+                ? this.productController.GetAllProducts()
+                : this.productController.GetActiveProducts();
             this.dgvProducts.ClearSelection();
         }
 
@@ -45,7 +51,17 @@
             }
 
             var product = this.BuildProductFromInputs(0);
-            var result = this.productController.Register(product);
+            bool result;
+
+            try
+            {
+                result = this.productController.Register(product, this.currentUser);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
 
             if (!result)
             {
@@ -72,7 +88,17 @@
             }
 
             var product = this.BuildProductFromInputs(this.selectedProductId);
-            var result = this.productController.Update(product);
+            bool result;
+
+            try
+            {
+                result = this.productController.Update(product, this.currentUser);
+            }
+            catch (UnauthorizedAccessException ex)
+            {
+                MessageBox.Show(ex.Message);
+                return;
+            }
 
             if (!result)
             {
@@ -109,6 +135,7 @@
             this.txtCarbs.Text = product.Carbs.ToString(CultureInfo.InvariantCulture);
             this.txtFat.Text = product.Fat.ToString(CultureInfo.InvariantCulture);
             this.txtUnit.Text = product.Unit;
+            this.selectedProductIsActive = product.IsActive;
             this.btnUpdate.Enabled = true;
         }
 
@@ -161,7 +188,8 @@
                 ParseDecimal(this.txtProtein.Text),
                 ParseDecimal(this.txtCarbs.Text),
                 ParseDecimal(this.txtFat.Text),
-                this.txtUnit.Text.Trim());
+                this.txtUnit.Text.Trim(),
+                this.selectedProductId == 0 ? true : this.selectedProductIsActive);
         }
 
         private static bool TryParseDecimal(string value, out decimal result)
@@ -183,6 +211,7 @@
         private void ClearFields()
         {
             this.selectedProductId = 0;
+            this.selectedProductIsActive = true;
             this.txtName.Clear();
             this.txtCalories.Clear();
             this.txtProtein.Clear();

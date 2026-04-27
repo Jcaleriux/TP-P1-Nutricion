@@ -36,7 +36,7 @@ namespace ClassViews
 
         private void btnManageProducts_Click(object sender, EventArgs e)
         {
-            using var productView = new ProductView(this.productController);
+            using var productView = new ProductView(this.productController, this.currentUser);
             productView.ShowDialog();
         }
 

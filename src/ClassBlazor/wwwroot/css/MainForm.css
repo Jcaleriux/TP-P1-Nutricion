@@ -71,6 +71,11 @@ body {
 }
 
 .main-form-nav-link {
+  display: block;
+  width: 100%;
+  border: 0;
+  background: transparent;
+  text-align: left;
   color: var(--bs-success);
 }
 

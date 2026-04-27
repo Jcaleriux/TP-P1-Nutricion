@@ -1,5 +1,5 @@
 UserId,Name,Email,Password,Goal,ActivityLevel,WeightKg,HeightCm,Age,Sex,DietType,Role,IsActive
-1,Jose,jose@gmail.com,123,Maintain,Moderate,72,175,21,Male,Standard,User,True
+1,Jose,jose@gmail.com,123,Maintain,Moderate,72,175,21,Male,Standard,Admin,True
 2,Andrea,andrea@gmail.com,2525,LoseFat,Light,65,165,22,Female,Vegetarian,User,True
 3,Carlos,carlos@gmail.com,1234,GainMass,High,80,178,24,Male,Keto,User,True
 4,Keylin,key@gmail.com,123,LoseFat,Light,70,170,25,Male,Standard,User,True
