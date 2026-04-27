@@ -1,57 +1,111 @@
-﻿@page "/register"
+@page "/register"
 
 @inject LoginController loginController
 @inject NavigationManager Navigation
 
-<h3>Register</h3>
+<PageTitle>Register</PageTitle>
+<HeadContent>
+    <link rel="stylesheet" href="/css/RegisterView.css" />
+</HeadContent>
 
-<input placeholder="Name" @bind="name" />
-<input placeholder="Email" @bind="email" />
-<input type="password" placeholder="Password" @bind="password" />
+<main class="register-page d-flex align-items-center py-4 bg-body-tertiary min-vh-100">
+    <div class="register-form w-100 m-auto">
+        <form>
+            <img class="register-logo mb-4" src="/images/logo.png" alt="Logo de la aplicacion" width="250"
+                 height="250" />
+            <h1 class="h3 mb-3 fw-normal">Create your account</h1>
 
-<input placeholder="Weight (kg)" @bind="weight" />
-<input placeholder="Height (cm)" @bind="height" />
-<input placeholder="Age" @bind="age" />
+            <div class="register-fields">
+                <div class="form-floating">
+                    <input @bind="name" type="text" class="form-control" id="registerName" placeholder="Pedro Nuñez" />
+                    <label for="registerName">Name</label>
+                </div>
 
-<select @bind="goal">
-    <option value="">Select Goal</option>
-    @foreach (var g in goals)
-    {
-        <option value="@g">@g</option>
-    }
-</select>
+                <div class="form-floating">
+                    <input @bind="email" type="email" class="form-control" id="registerEmail"
+                           placeholder="name@example.com" />
+                    <label for="registerEmail">Email</label>
+                </div>
 
-<select @bind="activityLevel">
-    <option value="">Activity Level</option>
-    @foreach (var a in activityLevels)
-    {
-        <option value="@a">@a</option>
-    }
-</select>
+                <div class="form-floating">
+                    <input @bind="password" type="password" class="form-control" id="registerPassword"
+                           placeholder="Password" />
+                    <label for="registerPassword">Password</label>
+                </div>
 
-<select @bind="sex">
-    <option value="">Sex</option>
-    @foreach (var s in sexes)
-    {
-        <option value="@s">@s</option>
-    }
-</select>
+                <div class="form-floating">
+                    <input @bind="weight" type="text" class="form-control" id="registerWeight" placeholder="75" />
+                    <label for="registerWeight">Weight (kg)</label>
+                </div>
 
-<select @bind="dietType">
-    <option value="">Diet Type</option>
-    @foreach (var d in dietTypes)
-    {
-        <option value="@d">@d</option>
-    }
-</select>
+                <div class="form-floating">
+                    <input @bind="height" type="text" class="form-control" id="registerHeight" placeholder="176" />
+                    <label for="registerHeight">Height (cm)</label>
+                </div>
 
-<br />
-<br />
+                <div class="form-floating">
+                    <input @bind="age" type="text" class="form-control" id="registerAge" placeholder="40" />
+                    <label for="registerAge">Age</label>
+                </div>
 
-<button @onclick="Register">Register</button>
-<button @onclick="GoToLogin">Go to login</button>
+                <div class="form-floating">
+                    <select @bind="goal" class="form-select" id="registerGoal">
+                        <option value="">Select Goal</option>
+                        @foreach (var g in goals)
+                        {
+                            <option value="@g">@g</option>
+                        }
+                    </select>
+                    <label for="registerGoal">Goal</label>
+                </div>
 
-<p style="color:red">@message</p>
+                <div class="form-floating">
+                    <select @bind="activityLevel" class="form-select" id="registerActivityLevel">
+                        <option value="">Activity Level</option>
+                        @foreach (var a in activityLevels)
+                        {
+                            <option value="@a">@a</option>
+                        }
+                    </select>
+                    <label for="registerActivityLevel">Activity Level</label>
+                </div>
+
+                <div class="form-floating">
+                    <select @bind="sex" class="form-select" id="registerSex">
+                        <option value="">Sex</option>
+                        @foreach (var s in sexes)
+                        {
+                            <option value="@s">@s</option>
+                        }
+                    </select>
+                    <label for="registerSex">Sex</label>
+                </div>
+
+                <div class="form-floating">
+                    <select @bind="dietType" class="form-select" id="registerDietType">
+                        <option value="">Diet Type</option>
+                        @foreach (var d in dietTypes)
+                        {
+                            <option value="@d">@d</option>
+                        }
+                    </select>
+                    <label for="registerDietType">Diet Type</label>
+                </div>
+            </div>
+
+            <div class="register-actions mt-4">
+                <button @onclick="Register" class="btn btn-success w-100 py-2" type="button">Register</button>
+                <button @onclick="GoToLogin" class="btn btn-outline-secondary w-100 py-2" type="button">Go to
+                    login</button>
+                </div>
+
+                @if (!string.IsNullOrEmpty(message))
+                {
+                    <p class="register-message mt-3 mb-0">@message</p>
+                }
+            </form>
+        </div>
+    </main>
 
 @code {
     private string name = "";

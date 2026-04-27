@@ -1,0 +1,30 @@
+.register-form {
+  max-width: 360px;
+  padding: 1rem;
+}
+
+.register-logo {
+  display: block;
+  margin-inline: auto;
+  width: 144px;
+  height: auto;
+}
+
+.register-fields {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.register-form .form-floating:focus-within {
+  z-index: 2;
+}
+
+.register-actions {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.register-message {
+  color: #dc3545;
+  text-align: center;
+}
