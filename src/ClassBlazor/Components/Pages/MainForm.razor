@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/css/MainForm.css" />
     <link rel="stylesheet" href="/css/ProductView.css" />
     <link rel="stylesheet" href="/css/MenuView.css" />
+    <link rel="stylesheet" href="/css/UserManagementView.css" />
 </HeadContent>
 
 @if (SessionService.CurrentUser is null)
@@ -63,7 +64,7 @@ else
                 @if (IsAdmin)
                 {
                     <li>
-                        <button type="button" @onclick="GoToUserManagement" class="main-form-nav-link nav-link">
+                        <button type="button" @onclick="ShowUserManagement" class="@GetNavLinkClass(ViewSection.UserManagement)">
                             <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                                 <use xlink:href="#people-circle"></use>
                             </svg>
@@ -114,6 +115,11 @@ else
                     case ViewSection.Menus:
                         <div class="main-form-panel main-form-panel-wide">
                             <MenuView />
+                        </div>
+                        break;
+                    case ViewSection.UserManagement:
+                        <div class="main-form-panel">
+                            <UserManagementView />
                         </div>
                         break;
                     default:
@@ -170,6 +176,11 @@ else
         CurrentSection = ViewSection.Menus;
     }
 
+    private void ShowUserManagement()
+    {
+        CurrentSection = ViewSection.UserManagement;
+    }
+
     private void GoToStatistics()
     {
         Navigation.NavigateTo("/statistics");
@@ -179,11 +190,6 @@ else
     {
         SessionService.CurrentUser = null;
         Navigation.NavigateTo("/");
-    }
-
-    private void GoToUserManagement()
-    {
-        Navigation.NavigateTo("/user-management");
     }
 
     private string GetNavLinkClass(ViewSection section)
@@ -197,6 +203,7 @@ else
     {
         Home,
         Products,
-        Menus
+        Menus,
+        UserManagement
     }
 }

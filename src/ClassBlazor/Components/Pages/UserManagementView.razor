@@ -1,146 +1,359 @@
-﻿@page "/user-management"
 @inject SessionService SessionService
-@inject NavigationManager Navigation
 @inject IUserController UserController
 
+<PageTitle>User Management</PageTitle>
 
-@if (SessionService.CurrentUser?.Role != "Admin")
+<h1>User Management</h1>
+
+@if (SessionService.CurrentUser is null)
 {
-    <p>Access denied</p>
+    <p>Redirecting...</p>
+}
+else if (!IsAdmin)
+{
+    <p class="user-management-note">Only admins can manage users.</p>
 }
 else
 {
-    <h3>User Management</h3>
-    <table>
-        <thead>
-            <tr>
-                <th>Name</th>
-                <th>Email</th>
-                <th>Role</th>
-                <th>Status</th>
-                <th>Actions</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var user in users)
+    <div class="user-management-shell">
+        <p class="user-management-note">Select a user to reset the password or change the account status.</p>
+
+        <section class="user-management-form">
+            <div class="user-management-fields">
+                <div class="form-floating">
+                    <input @bind="selectedName" type="text" class="form-control" id="userName" placeholder="Name" readonly />
+                    <label for="userName">Name</label>
+                </div>
+
+                <div class="form-floating">
+                    <input @bind="selectedEmail" type="text" class="form-control" id="userEmail" placeholder="Email" readonly />
+                    <label for="userEmail">Email</label>
+                </div>
+
+                <div class="form-floating">
+                    <input @bind="selectedRole" type="text" class="form-control" id="userRole" placeholder="Role" readonly />
+                    <label for="userRole">Role</label>
+                </div>
+
+                <div class="form-floating">
+                    <input value="@SelectedStatusText" type="text" class="form-control" id="userStatus" placeholder="Status" readonly />
+                    <label for="userStatus">Status</label>
+                </div>
+
+                <div class="form-floating user-management-password-field">
+                    <input @bind="password" type="password" class="form-control" id="userPassword" placeholder="New password" />
+                    <label for="userPassword">New Password</label>
+                </div>
+            </div>
+
+            <div class="user-management-actions mt-2">
+                <button @onclick="ResetPassword" class="btn btn-success w-100 py-2" type="button" disabled="@(selectedUserId == 0)">Reset password</button>
+                <button @onclick="ToggleUserStatus" class="btn btn-outline-success w-100 py-2" type="button" disabled="@(selectedUserId == 0)">
+                    @(selectedUserIsActive ? "Deactivate" : "Activate")
+                </button>
+                <button @onclick="ClearSelection" class="btn btn-outline-secondary w-100 py-2" type="button">Clear</button>
+            </div>
+
+            <p class="user-management-selection-note mb-0">@SelectedUserText</p>
+
+            @if (!string.IsNullOrWhiteSpace(message))
             {
-                <tr>
-                    <td>@user.Name</td>
-                    <td>@user.Email</td>
-                    <td>@user.Role</td>
-                    <td>@(user.IsActive ? "Active" : "Inactive")</td>
-                    <td>
-                        <input type="password" placeholder="New password" @bind="passwords[user.UserId]" />
-                        <button @onclick="() => ResetPassword(user.UserId)">
-                            Reset Password
-                        </button>
-                        @if (user.IsActive)
-                        {
-                            <button @onclick="() => DeactivateUser(user.UserId)">Deactivate</button>
-                        }
-                        else
-                        {
-                            <button @onclick="() => ActivateUser(user.UserId)">Activate</button>
-                        }
-                    </td>
-                </tr>
+                <p class="@MessageClass mt-3 mb-0">@message</p>
             }
-        </tbody>
-    </table>
-    @if (!string.IsNullOrEmpty(message))
-    {
-        <p>@message</p>
-    }
-    <button @onclick="GoToMain">Back to Main</button>
+        </section>
+
+        <section class="user-management-table-section">
+            <table class="table table-striped user-table">
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Email</th>
+                        <th>Role</th>
+                        <th>Status</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @if (users.Count == 0)
+                    {
+                        <tr>
+                            <td colspan="4" class="text-center text-muted">No users found.</td>
+                        </tr>
+                    }
+                    else
+                    {
+                        @foreach (var user in PagedUsers)
+                        {
+                            <tr class="@GetRowClass(user)" @onclick="@(() => HandleRowClick(user))">
+                                <td>@user.Name</td>
+                                <td>@user.Email</td>
+                                <td>@user.Role</td>
+                                <td>@(user.IsActive ? "Active" : "Inactive")</td>
+                            </tr>
+                        }
+                    }
+                </tbody>
+            </table>
+
+            @if (TotalPages > 1)
+            {
+                <nav aria-label="User pagination" class="user-pagination-nav">
+                    <ul class="pagination user-pagination">
+                        <li class="page-item @(CurrentPage == 1 ? "disabled" : string.Empty)">
+                            <button type="button" class="page-link" @onclick="GoToPreviousPage" disabled="@(CurrentPage == 1)">Previous</button>
+                        </li>
+
+                        @for (var pageNumber = 1; pageNumber <= TotalPages; pageNumber++)
+                        {
+                            var currentPageNumber = pageNumber;
+
+                            <li class="page-item @(CurrentPage == currentPageNumber ? "active" : string.Empty)">
+                                <button
+                                    type="button"
+                                    class="page-link"
+                                    aria-current="@(CurrentPage == currentPageNumber ? "page" : null)"
+                                    @onclick="@(() => GoToPage(currentPageNumber))">
+                                    @currentPageNumber
+                                </button>
+                            </li>
+                        }
+
+                        <li class="page-item @(CurrentPage == TotalPages ? "disabled" : string.Empty)">
+                            <button type="button" class="page-link" @onclick="GoToNextPage" disabled="@(CurrentPage == TotalPages)">Next</button>
+                        </li>
+                    </ul>
+                </nav>
+            }
+        </section>
+    </div>
 }
 
 @code {
-    private List<User> users = new();
-    private string message = "";
-    private Dictionary<int, string> passwords = new();
+    private List<User> users = [];
+    private const int PageSize = 10;
+    private int selectedUserId;
+    private int CurrentPage { get; set; } = 1;
+    private string selectedName = string.Empty;
+    private string selectedEmail = string.Empty;
+    private string selectedRole = string.Empty;
+    private string password = string.Empty;
+    private string message = string.Empty;
+    private bool messageIsError = true;
+    private bool selectedUserIsActive = true;
+    private bool IsAdmin => SessionService.CurrentUser?.Role == "Admin";
+    private int TotalPages => Math.Max(1, (int)Math.Ceiling(users.Count / (double)PageSize));
+    private IEnumerable<User> PagedUsers => users
+        .Skip((CurrentPage - 1) * PageSize)
+        .Take(PageSize);
+    private string MessageClass => messageIsError
+        ? "user-management-message user-management-message-error"
+        : "user-management-message user-management-message-success";
+    private string SelectedUserText => selectedUserId == 0
+        ? "No user selected."
+        : $"Selected user: {selectedName} ({selectedRole})";
+    private string SelectedStatusText => selectedUserId == 0
+        ? string.Empty
+        : selectedUserIsActive ? "Active" : "Inactive";
 
     protected override void OnInitialized()
     {
-        if (SessionService.CurrentUser is null)
-        {
-            Navigation.NavigateTo("/");
-            return;
-        }
-
-        if (SessionService.CurrentUser.Role != "Admin")
+        if (SessionService.CurrentUser is null || !IsAdmin)
         {
             return;
         }
 
-        users = UserController.GetAllUsers();
-
-        foreach (var user in users)
-        {
-            if (!passwords.ContainsKey(user.UserId))
-            {
-                passwords[user.UserId] = "";
-            }
-        }
+        LoadUsers();
     }
 
-    private void ResetPassword(int userId)
+    private void LoadUsers()
     {
+        users = UserController.GetAllUsers().ToList();
+        EnsureCurrentPageIsValid();
+    }
+
+    private void ResetPassword()
+    {
+        if (SessionService.CurrentUser is null)
+        {
+            SetError("User not authenticated.");
+            return;
+        }
+
+        if (selectedUserId == 0)
+        {
+            SetError("Select a user first.");
+            return;
+        }
+
+        if (string.IsNullOrWhiteSpace(password))
+        {
+            SetError("Please enter a new password.");
+            return;
+        }
+
         try
         {
-            if (!passwords.ContainsKey(userId) || string.IsNullOrWhiteSpace(passwords[userId]))
+            var result = UserController.ResetPassword(selectedUserId, password, SessionService.CurrentUser);
+
+            if (!result)
             {
-                message = "Please enter a password.";
+                SetError("The user could not be updated.");
                 return;
             }
 
-            var result = UserController.ResetPassword(
-                userId,
-                passwords[userId],
-                SessionService.CurrentUser!
-            );
-
-            message = result ? "Password reset" : "User not found";
-
-            passwords[userId] = ""; // limpiar input
+            password = string.Empty;
+            LoadUsers();
+            SyncSelectedUser();
+            SetSuccess("Password reset successfully.");
         }
         catch (UnauthorizedAccessException ex)
         {
-            message = ex.Message;
+            SetError(ex.Message);
         }
     }
 
-    private void DeactivateUser(int userId)
+    private void ToggleUserStatus()
     {
+        if (SessionService.CurrentUser is null)
+        {
+            SetError("User not authenticated.");
+            return;
+        }
+
+        if (selectedUserId == 0)
+        {
+            SetError("Select a user first.");
+            return;
+        }
+
         try
         {
-            var result = UserController.DeactivateUser(userId, SessionService.CurrentUser!);
+            var wasActive = selectedUserIsActive;
+            var result = selectedUserIsActive
+                ? UserController.DeactivateUser(selectedUserId, SessionService.CurrentUser)
+                : UserController.ActivateUser(selectedUserId, SessionService.CurrentUser);
 
-            message = result ? "User deactivated" : "User not found";
+            if (!result)
+            {
+                SetError("The user status could not be updated.");
+                return;
+            }
 
-            users = UserController.GetAllUsers();
+            LoadUsers();
+            SyncSelectedUser();
+            SetSuccess(wasActive
+                ? "User deactivated successfully."
+                : "User activated successfully.");
         }
         catch (UnauthorizedAccessException ex)
         {
-            message = ex.Message;
+            SetError(ex.Message);
         }
     }
 
-    private void ActivateUser(int userId)
+    private void HandleRowClick(User user)
     {
-        try
+        SelectUser(user);
+    }
+
+    private void SelectUser(User user)
+    {
+        selectedUserId = user.UserId;
+        selectedName = user.Name;
+        selectedEmail = user.Email;
+        selectedRole = user.Role;
+        selectedUserIsActive = user.IsActive;
+        password = string.Empty;
+        ClearMessage();
+    }
+
+    private void SyncSelectedUser()
+    {
+        if (selectedUserId == 0)
         {
-            var result = UserController.ActivateUser(userId, SessionService.CurrentUser!);
-            message = result ? "User activated" : "User not found";
-            users = UserController.GetAllUsers();
+            return;
         }
-        catch (UnauthorizedAccessException ex)
+
+        var selectedUser = users.FirstOrDefault(user => user.UserId == selectedUserId);
+
+        if (selectedUser is null)
         {
-            message = ex.Message;
+            ClearSelection();
+            return;
+        }
+
+        selectedName = selectedUser.Name;
+        selectedEmail = selectedUser.Email;
+        selectedRole = selectedUser.Role;
+        selectedUserIsActive = selectedUser.IsActive;
+        password = string.Empty;
+    }
+
+    private void ClearSelection()
+    {
+        selectedUserId = 0;
+        selectedName = string.Empty;
+        selectedEmail = string.Empty;
+        selectedRole = string.Empty;
+        selectedUserIsActive = true;
+        password = string.Empty;
+        ClearMessage();
+    }
+
+    private string GetRowClass(User user)
+    {
+        var rowClass = selectedUserId == user.UserId
+            ? "user-row user-row-selected"
+            : "user-row";
+
+        if (!user.IsActive)
+        {
+            rowClass += " user-row-inactive";
+        }
+
+        return rowClass;
+    }
+
+    private void GoToPage(int pageNumber)
+    {
+        CurrentPage = Math.Clamp(pageNumber, 1, TotalPages);
+    }
+
+    private void GoToPreviousPage()
+    {
+        if (CurrentPage > 1)
+        {
+            CurrentPage--;
         }
     }
 
-    private void GoToMain()
+    private void GoToNextPage()
     {
-        Navigation.NavigateTo("/main");
+        if (CurrentPage < TotalPages)
+        {
+            CurrentPage++;
+        }
+    }
+
+    private void EnsureCurrentPageIsValid()
+    {
+        CurrentPage = Math.Clamp(CurrentPage, 1, TotalPages);
+    }
+
+    private void SetSuccess(string text)
+    {
+        message = text;
+        messageIsError = false;
+    }
+
+    private void SetError(string text)
+    {
+        message = text;
+        messageIsError = true;
+    }
+
+    private void ClearMessage()
+    {
+        message = string.Empty;
+        messageIsError = true;
     }
 }
