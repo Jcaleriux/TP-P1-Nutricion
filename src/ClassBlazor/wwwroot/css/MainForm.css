@@ -49,6 +49,11 @@ body {
   text-align: center;
 }
 
+.main-form-panel-wide {
+  max-width: 1280px;
+  text-align: initial;
+}
+
 .nutrition-info-list {
   display: inline-block;
   text-align: left;
@@ -70,23 +75,24 @@ body {
   line-height: 1.1;
 }
 
-.main-form-nav-link {
+.main-form-sidebar .main-form-nav-link {
   display: block;
   width: 100%;
   border: 0;
   background: transparent;
+  border-radius: 0.6rem;
   text-align: left;
   color: var(--bs-success);
 }
 
-.main-form-nav-link:hover,
-.main-form-nav-link:focus {
+.main-form-sidebar .main-form-nav-link:hover,
+.main-form-sidebar .main-form-nav-link:focus {
   color: var(--bs-success);
   background-color: rgba(var(--bs-success-rgb), 0.14);
 }
 
-.nav-pills .main-form-nav-link.active,
-.nav-pills .show > .main-form-nav-link {
+.main-form-sidebar .nav-pills .main-form-nav-link.active,
+.main-form-sidebar .nav-pills .show > .main-form-nav-link {
   color: var(--bs-white);
   background-color: var(--bs-success);
 }
@@ -106,4 +112,16 @@ body {
 .bi {
   vertical-align: -0.125em;
   fill: currentColor;
+}
+
+@media (max-width: 768px) {
+  .main-form-layout {
+    flex-direction: column;
+  }
+
+  .main-form-sidebar,
+  .main-form-content {
+    min-height: auto;
+    width: 100%;
+  }
 }

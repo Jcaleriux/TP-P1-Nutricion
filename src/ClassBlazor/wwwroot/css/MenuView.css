@@ -1,0 +1,263 @@
+.menu-management-title {
+  text-align: center;
+}
+
+.menu-management-shell {
+  display: grid;
+  gap: 1.5rem;
+  width: min(100%, 1180px);
+  margin-inline: auto;
+}
+
+.menu-management-summary-card,
+.menu-management-table-section {
+  background-color: rgba(var(--bs-light-rgb), 0.55);
+  border: 1px solid rgba(var(--bs-success-rgb), 0.12);
+  border-radius: 1rem;
+  padding: 1.25rem;
+}
+
+.menu-management-form {
+  width: 100%;
+}
+
+.menu-management-message {
+  margin-bottom: 0;
+  text-align: center;
+}
+
+.menu-management-message-error {
+  color: #dc3545;
+}
+
+.menu-management-message-success {
+  color: var(--bs-success);
+}
+
+.menu-management-fields {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.menu-management-fields-compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.menu-management-fields-single {
+  grid-template-columns: minmax(0, 1fr);
+}
+
+.menu-management-form .form-floating:focus-within {
+  z-index: 2;
+}
+
+.menu-management-totals {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(140px, 1fr));
+  gap: 0.75rem;
+}
+
+.menu-management-totals > div {
+  display: grid;
+  gap: 0.25rem;
+  padding: 0.9rem 1rem;
+  border-radius: 0.85rem;
+  background-color: rgba(var(--bs-success-rgb), 0.08);
+  text-align: center;
+}
+
+.menu-management-total-label {
+  font-size: 0.85rem;
+  color: var(--bs-secondary-color);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.menu-management-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(320px, 1fr));
+  gap: 1.5rem;
+  align-items: start;
+}
+
+.menu-management-table-section {
+  width: 100%;
+  display: grid;
+  gap: 1rem;
+}
+
+.menu-management-table-heading {
+  display: grid;
+  gap: 0.35rem;
+}
+
+.menu-management-table-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 1rem;
+}
+
+.menu-management-table-caption {
+  color: var(--bs-secondary-color);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+.menu-management-sync-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0.45rem 0.8rem;
+  border-radius: 999px;
+  font-size: 0.8rem;
+  font-weight: 600;
+  letter-spacing: 0.03em;
+  white-space: nowrap;
+}
+
+.menu-management-sync-badge-draft {
+  color: #8a6d3b;
+  background-color: rgba(255, 193, 7, 0.18);
+  border: 1px solid rgba(255, 193, 7, 0.3);
+}
+
+.menu-management-sync-badge-live {
+  color: var(--bs-success-text-emphasis, var(--bs-success));
+  background-color: rgba(var(--bs-success-rgb), 0.12);
+  border: 1px solid rgba(var(--bs-success-rgb), 0.22);
+}
+
+.menu-management-table {
+  margin: 0;
+  min-width: 0;
+  width: 100%;
+}
+
+.menu-management-table-scroll {
+  max-height: min(26rem, 55vh);
+  overflow: auto;
+}
+
+.menu-management-table thead th {
+  position: sticky;
+  top: 0;
+  background-color: var(--bs-body-bg);
+  z-index: 1;
+}
+
+.menu-management-table td,
+.menu-management-table th {
+  white-space: nowrap;
+}
+
+.menu-management-table .menu-row {
+  cursor: pointer;
+  transition: background-color 0.15s ease;
+}
+
+.menu-management-table .menu-row:hover > * {
+  background-color: rgba(var(--bs-success-rgb), 0.14);
+}
+
+.menu-management-table .menu-row.menu-row-selected > * {
+  background-color: rgba(var(--bs-success-rgb), 0.22);
+}
+
+.menu-management-editor {
+  display: grid;
+  gap: 1rem;
+  padding: 1rem;
+  border-radius: 0.85rem;
+  background-color: rgba(var(--bs-success-rgb), 0.06);
+  border: 1px solid rgba(var(--bs-success-rgb), 0.12);
+}
+
+.menu-management-product-fields {
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+}
+
+.menu-management-actions {
+  display: grid;
+  gap: 0.75rem;
+}
+
+.menu-management-actions-compact {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.menu-management-product-actions {
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+}
+
+.menu-management-selection-note {
+  color: var(--bs-secondary-color);
+  font-size: 0.95rem;
+}
+
+.menu-management-editor-note {
+  color: var(--bs-secondary-color);
+  font-size: 0.95rem;
+  line-height: 1.45;
+}
+
+@media (max-width: 1400px) {
+  .menu-management-shell {
+    width: 100%;
+  }
+}
+
+@media (max-width: 1200px) {
+  .menu-management-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .menu-management-product-fields {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .menu-management-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .menu-management-totals {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+@media (max-width: 900px) {
+  .menu-management-table-header {
+    align-items: flex-start;
+    flex-direction: column;
+  }
+
+  .menu-management-table-scroll {
+    max-height: 22rem;
+  }
+}
+
+@media (max-width: 576px) {
+  .menu-management-fields,
+  .menu-management-actions,
+  .menu-management-totals {
+    grid-template-columns: 1fr;
+  }
+
+  .menu-management-product-fields,
+  .menu-management-product-actions,
+  .menu-management-fields-compact,
+  .menu-management-actions-compact,
+  .menu-management-fields-single {
+    grid-template-columns: 1fr;
+  }
+
+  .menu-management-summary-card,
+  .menu-management-table-section {
+    padding: 1rem;
+  }
+
+  .menu-management-editor {
+    padding: 0.85rem;
+  }
+}
