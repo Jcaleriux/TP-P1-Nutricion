@@ -1,6 +1,8 @@
 @inject ProductController ProductController
 @inject SessionService SessionService
 
+<PageTitle>Products</PageTitle>
+
 <h1>Product Management</h1>
 
 @if (SessionService.CurrentUser is null)
@@ -18,8 +20,6 @@ else
         @if (IsAdmin)
         {
             <section class="product-management-form">
-                <h2 class="h3 mb-3 fw-normal">Product Management</h2>
-
                 <div class="product-management-fields">
                     <div class="form-floating">
                         <input @bind="name" type="text" class="form-control" id="productName" placeholder="Chicken breast" />
@@ -52,7 +52,7 @@ else
                     </div>
                 </div>
 
-                <div class="product-management-actions mt-4">
+                <div class="product-management-actions mt-2">
                     <button @onclick="Register" class="btn btn-success w-100 py-2" type="button">Register</button>
                     <button @onclick="Update" class="btn btn-outline-success w-100 py-2" type="button" disabled="@(selectedProductId == 0)">Update</button>
                     <button @onclick="ToggleProductStatus" class="btn btn-outline-success w-100 py-2" type="button" disabled="@(selectedProductId == 0)">
