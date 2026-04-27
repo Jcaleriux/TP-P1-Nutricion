@@ -33,6 +33,18 @@
         }
 
         /// <summary>
+        /// Gets all active products.
+        /// </summary>
+        /// <returns>The list of active products.</returns>
+        public List<Product> GetActiveProducts()
+        {
+            return this.products
+                .Where(product => product.IsActive)
+                .OrderBy(product => product.ProductId)
+                .ToList();
+        }
+
+        /// <summary>
         /// Registers a new product.
         /// </summary>
         /// <param name="product">The product to register.</param>
@@ -84,8 +96,31 @@
             existingProduct.Carbs = product.Carbs;
             existingProduct.Fat = product.Fat;
             existingProduct.Unit = product.Unit;
+            existingProduct.IsActive = product.IsActive;
 
             return this.repository.SaveData(this.products);
+        }
+
+        /// <summary>
+        /// Deactivates a product.
+        /// </summary>
+        /// <param name="productId">The product identifier.</param>
+        /// <param name="user">The user performing the action.</param>
+        /// <returns>True if the product was deactivated; otherwise, false.</returns>
+        public bool DeactivateProduct(int productId, User user)
+        {
+            return this.SetProductStatus(productId, false, user, "deactivate");
+        }
+
+        /// <summary>
+        /// Activates a product.
+        /// </summary>
+        /// <param name="productId">The product identifier.</param>
+        /// <param name="user">The user performing the action.</param>
+        /// <returns>True if the product was activated; otherwise, false.</returns>
+        public bool ActivateProduct(int productId, User user)
+        {
+            return this.SetProductStatus(productId, true, user, "activate");
         }
 
         private bool ExistsProductName(string name, int excludedProductId)
@@ -105,6 +140,25 @@
             }
 
             return this.products.Max(product => product.ProductId) + 1;
+        }
+
+        private bool SetProductStatus(int productId, bool isActive, User user, string action)
+        {
+            if (user.Role != "Admin")
+            {
+                throw new UnauthorizedAccessException($"Only admin can {action} products");
+            }
+
+            var existingProduct = this.products
+                .FirstOrDefault(item => item.ProductId == productId);
+
+            if (existingProduct is null)
+            {
+                return false;
+            }
+
+            existingProduct.IsActive = isActive;
+            return this.repository.SaveData(this.products);
         }
     }
 }

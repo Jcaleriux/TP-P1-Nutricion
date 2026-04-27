@@ -17,6 +17,12 @@ namespace ClassController.Abstractions
         public List<Product> GetAllProducts();
 
         /// <summary>
+        /// Retrieves only active products.
+        /// </summary>
+        /// <returns>A list of active <see cref="Product"/> objects.</returns>
+        public List<Product> GetActiveProducts();
+
+        /// <summary>
         /// Attempts to register the specified product in the system.
         /// </summary>
         /// <param name="product">The product to register. Cannot be null.</param>
@@ -30,5 +36,21 @@ namespace ClassController.Abstractions
         /// entry.</param>
         /// <returns>true if the product was successfully updated; otherwise, false.</returns>
         public bool Update(Product product, User user);
+
+        /// <summary>
+        /// Deactivates a product.
+        /// </summary>
+        /// <param name="productId">The product identifier.</param>
+        /// <param name="user">The user performing the action.</param>
+        /// <returns>true if the product was deactivated; otherwise, false.</returns>
+        public bool DeactivateProduct(int productId, User user);
+
+        /// <summary>
+        /// Activates a product.
+        /// </summary>
+        /// <param name="productId">The product identifier.</param>
+        /// <param name="user">The user performing the action.</param>
+        /// <returns>true if the product was activated; otherwise, false.</returns>
+        public bool ActivateProduct(int productId, User user);
     }
 }
