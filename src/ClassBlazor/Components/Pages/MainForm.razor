@@ -6,6 +6,7 @@
 <PageTitle>Main Page</PageTitle>
 <HeadContent>
     <link rel="stylesheet" href="/css/MainForm.css" />
+    <link rel="stylesheet" href="/css/ProductView.css" />
 </HeadContent>
 
 @if (SessionService.CurrentUser is null)
@@ -26,46 +27,46 @@ else
 
             <ul class="nav nav-pills flex-column mb-auto">
                 <li class="nav-item">
-                    <a @onclick="ShowHome" href="#" class="@GetNavLinkClass(ViewSection.Home)" aria-current="page">
+                    <button type="button" @onclick="ShowHome" class="@GetNavLinkClass(ViewSection.Home)" aria-current="page">
                         <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                             <use xlink:href="#home"></use>
                         </svg>
                         Home
-                    </a>
+                    </button>
                 </li>
                 <li>
-                    <a @onclick="GoToProducts" href="#" class="main-form-nav-link nav-link">
+                    <button type="button" @onclick="ShowProducts" class="@GetNavLinkClass(ViewSection.Products)">
                         <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                             <use xlink:href="#speedometer2"></use>
                         </svg>
                         Products
-                    </a>
+                    </button>
                 </li>
                 <li>
-                    <a @onclick="GoToMenus" href="#" class="main-form-nav-link nav-link">
+                    <button type="button" @onclick="GoToMenus" class="main-form-nav-link nav-link">
                         <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                             <use xlink:href="#table"></use>
                         </svg>
                         Menus
-                    </a>
+                    </button>
                 </li>
                 <li>
-                    <a @onclick="GoToStatistics" href="#" class="main-form-nav-link nav-link">
+                    <button type="button" @onclick="GoToStatistics" class="main-form-nav-link nav-link">
                         <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                             <use xlink:href="#grid"></use>
                         </svg>
                         Statistics
-                    </a>
+                    </button>
                 </li>
                 @if (IsAdmin)
                 {
                     <li>
-                        <a @onclick="GoToUserManagement" href="#" class="main-form-nav-link nav-link">
+                        <button type="button" @onclick="GoToUserManagement" class="main-form-nav-link nav-link">
                             <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                                 <use xlink:href="#people-circle"></use>
                             </svg>
                             User Management
-                        </a>
+                        </button>
                     </li>
                 }
             </ul>
@@ -73,7 +74,7 @@ else
             <hr />
 
             <div class="dropdown">
-                <a href="#" class="main-form-user-link d-flex align-items-center text-decoration-none dropdown-toggle"
+                <a href="#" @onclick:preventDefault="true" class="main-form-user-link d-flex align-items-center text-decoration-none dropdown-toggle"
                        data-bs-toggle="dropdown" aria-expanded="false">
                     <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                         <use xlink:href="#people-circle"></use>
@@ -81,7 +82,7 @@ else
                     <strong class="fs-4">@UserName</strong>
                 </a>
                 <ul class="dropdown-menu text-small shadow">
-                    <li><a @onclick="Logout" class="dropdown-item" href="#">Sign out</a></li>
+                    <li><a @onclick="Logout" @onclick:preventDefault="true" class="dropdown-item" href="#">Sign out</a></li>
                 </ul>
             </div>
         </div>
@@ -97,6 +98,11 @@ else
                     case ViewSection.Home:
                         <div class="main-form-panel">
                             <NutritionInfoView />
+                        </div>
+                        break;
+                    case ViewSection.Products:
+                        <div class="main-form-panel">
+                            <ProductView />
                         </div>
                         break;
                     default:
@@ -138,9 +144,9 @@ else
         Navigation.NavigateTo("/");
     }
 
-    private void GoToProducts()
+    private void ShowProducts()
     {
-        Navigation.NavigateTo("/products");
+        CurrentSection = ViewSection.Products;
     }
 
     private void GoToMenus()
@@ -178,6 +184,7 @@ else
 
     private enum ViewSection
     {
-        Home
+        Home,
+        Products
     }
 }

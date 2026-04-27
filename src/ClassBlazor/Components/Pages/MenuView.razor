@@ -131,6 +131,7 @@ else
     private readonly string[] mealTimes = ["Breakfast", "Snack", "Lunch", "Dinner"];
     private readonly List<MenuProduct> pendingMenuProducts = [];
     private List<Product> products = [];
+    private List<Product> allProducts = [];
     private List<MenuGridItem> menus = [];
     private List<PendingProductGridItem> pendingProductRows = [];
     private int selectedMenuId;
@@ -165,7 +166,8 @@ else
 
     private void LoadProducts()
     {
-        products = ProductController.GetAllProducts();
+        allProducts = ProductController.GetAllProducts();
+        products = ProductController.GetActiveProducts();
     }
 
     private void LoadMenus()
@@ -196,6 +198,7 @@ else
             .Select(menuProduct =>
             {
                 var product = products.FirstOrDefault(item => item.ProductId == menuProduct.ProductId);
+                product ??= allProducts.FirstOrDefault(item => item.ProductId == menuProduct.ProductId);
 
                 return new PendingProductGridItem
                 {
@@ -216,6 +219,14 @@ else
         if (selectedProductId == 0)
         {
             message = "Select a product.";
+            return;
+        }
+
+        var selectedProduct = products.FirstOrDefault(product => product.ProductId == selectedProductId);
+
+        if (selectedProduct is null)
+        {
+            message = "The selected product is not available.";
             return;
         }
 

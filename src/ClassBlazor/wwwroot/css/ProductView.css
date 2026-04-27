@@ -1,0 +1,114 @@
+.product-management-shell {
+  display: grid;
+  gap: 2rem;
+}
+
+.product-management-form {
+  max-width: 500px;
+  margin-inline: auto;
+  width: 100%;
+}
+
+.product-management-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.product-management-form .form-floating:focus-within {
+  z-index: 2;
+}
+
+.product-management-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.75rem;
+}
+
+.product-management-message {
+  color: #dc3545;
+  text-align: center;
+}
+
+.product-management-note {
+  margin: 0 auto;
+  max-width: 520px;
+  text-align: center;
+  color: var(--bs-secondary-color);
+}
+
+.product-management-table-section {
+  width: 100%;
+  background-color: rgba(var(--bs-light-rgb), 0.55);
+  border: 1px solid rgba(var(--bs-success-rgb), 0.12);
+  border-radius: 1rem;
+  padding: 1rem;
+}
+
+.product-table {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.product-table .product-row {
+  cursor: pointer;
+}
+
+.product-table .product-row:hover > * {
+  background-color: rgba(var(--bs-success-rgb), 0.14);
+}
+
+.product-table .product-row.product-row-selected > * {
+  background-color: rgba(var(--bs-success-rgb), 0.22);
+}
+
+.product-table .product-row.product-row-inactive > * {
+  color: var(--bs-secondary-color);
+  background-color: rgba(var(--bs-secondary-rgb), 0.12);
+}
+
+.product-pagination-nav {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.product-pagination .page-link {
+  color: var(--bs-success);
+  border-color: rgba(var(--bs-success-rgb), 0.3);
+  background-color: var(--bs-body-bg);
+}
+
+.product-pagination .page-link:hover,
+.product-pagination .page-link:focus {
+  color: var(--bs-success);
+  background-color: rgba(var(--bs-success-rgb), 0.12);
+  border-color: rgba(var(--bs-success-rgb), 0.45);
+  box-shadow: 0 0 0 0.2rem rgba(var(--bs-success-rgb), 0.15);
+}
+
+.product-pagination .page-item.active .page-link {
+  color: var(--bs-white);
+  background-color: var(--bs-success);
+  border-color: var(--bs-success);
+}
+
+.product-pagination .page-item.disabled .page-link {
+  color: rgba(var(--bs-success-rgb), 0.45);
+  background-color: rgba(var(--bs-success-rgb), 0.05);
+  border-color: rgba(var(--bs-success-rgb), 0.15);
+}
+
+@media (max-width: 576px) {
+  .product-management-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .product-management-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .product-management-table-section {
+    padding: 0.75rem;
+  }
+}

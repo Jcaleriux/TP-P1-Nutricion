@@ -25,7 +25,8 @@ namespace ClassModels
             decimal protein,
             decimal carbs,
             decimal fat,
-            string unit
+            string unit,
+            bool isActive = true
             ) 
         {
             this.ProductId = productId;
@@ -35,6 +36,7 @@ namespace ClassModels
             this.Carbs = carbs;
             this.Fat = fat;
             this.Unit = unit;
+            this.IsActive = isActive;
         }
         
         /// <summary>
@@ -49,6 +51,7 @@ namespace ClassModels
             { 
                 throw new ArgumentException("Invalid product data. Expected 7 elements.");
             }
+
             this.ProductId = int.Parse(productData[0], CultureInfo.InvariantCulture);
             this.Name = productData[1];
             this.Calories = decimal.Parse(productData[2], CultureInfo.InvariantCulture);
@@ -56,6 +59,7 @@ namespace ClassModels
             this.Carbs = decimal.Parse(productData[4], CultureInfo.InvariantCulture);
             this.Fat = decimal.Parse(productData[5], CultureInfo.InvariantCulture);
             this.Unit = productData[6];
+            this.IsActive = productData.Length <= 7 || bool.Parse(productData[7]);
         }
 
         /// <summary>
@@ -92,5 +96,10 @@ namespace ClassModels
         /// Gets or sets the unit of measurement associated with the value.
         /// </summary>
         public string Unit { get; set; }
+
+        /// <summary>
+        /// Gets or sets a value indicating whether the product is active.
+        /// </summary>
+        public bool IsActive { get; set; } = true;
     }
 }
