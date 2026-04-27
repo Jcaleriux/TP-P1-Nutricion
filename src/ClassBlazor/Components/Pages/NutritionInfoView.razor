@@ -1,9 +1,6 @@
-﻿@page "/nutritionInfo"
-
 @inject SessionService SessionService
-@inject NavigationManager Navigation
 
-<h3>Nutrition Information</h3>
+<h3 class="main-form-welcome">Nutrition Information</h3>
 
 @if (SessionService.CurrentUser is null)
 {
@@ -18,7 +15,6 @@ else
     <p><strong>Protein:</strong> @protein g</p>
     <p><strong>Carbs:</strong> @carbs g</p>
     <p><strong>Fat:</strong> @fat g</p>
-    <button @onclick="GoBack">Volver</button>
 }
 
 @code {
@@ -34,7 +30,6 @@ else
     {
         if (SessionService.CurrentUser is null)
         {
-            Navigation.NavigateTo("/");
             return;
         }
 
@@ -55,10 +50,5 @@ else
         protein = macros.Protein;
         carbs = macros.Carbs;
         fat = macros.Fat;
-    }
-
-    private void GoBack()
-    {
-        Navigation.NavigateTo("/main");
     }
 }
