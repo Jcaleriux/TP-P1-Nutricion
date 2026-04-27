@@ -49,6 +49,11 @@ body {
   text-align: center;
 }
 
+.nutrition-info-list {
+  display: inline-block;
+  text-align: left;
+}
+
 .main-form-brand {
   gap: 0.75rem;
   margin-bottom: 1rem;

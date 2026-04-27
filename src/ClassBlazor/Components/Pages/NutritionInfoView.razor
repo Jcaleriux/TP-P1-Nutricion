@@ -1,6 +1,6 @@
 @inject SessionService SessionService
 
-<h3 class="main-form-welcome">Nutrition Information</h3>
+<h3 class="main-form-welcome mb-4">Nutrition Information</h3>
 
 @if (SessionService.CurrentUser is null)
 {
@@ -8,13 +8,15 @@
 }
 else
 {
-    <p><strong>BMI:</strong> @bmi</p>
-    <p><strong>Category:</strong> @bmiCategory</p>
-    <p><strong>Maintenance Calories:</strong> @maintenanceCalories kcal</p>
-    <p><strong>Goal Calories:</strong> @goalCalories kcal</p>
-    <p><strong>Protein:</strong> @protein g</p>
-    <p><strong>Carbs:</strong> @carbs g</p>
-    <p><strong>Fat:</strong> @fat g</p>
+    <div class="nutrition-info-list">
+        <p><strong>BMI:</strong> @bmi.ToString("F2")</p>
+        <p><strong>Category:</strong> @bmiCategory</p>
+        <p><strong>Maintenance Calories:</strong> @maintenanceCalories.ToString("F2") kcal</p>
+        <p><strong>Goal Calories:</strong> @goalCalories.ToString("F2") kcal</p>
+        <p><strong>Protein:</strong> @protein.ToString("F2") g</p>
+        <p><strong>Carbs:</strong> @carbs.ToString("F2") g</p>
+        <p><strong>Fat:</strong> @fat.ToString("F2") g</p>
+    </div>
 }
 
 @code {
