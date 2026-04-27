@@ -17,10 +17,6 @@
   padding: 1.25rem;
 }
 
-.menu-management-form {
-  width: 100%;
-}
-
 .menu-management-message {
   margin-bottom: 0;
   text-align: center;
@@ -40,16 +36,8 @@
   gap: 0.75rem;
 }
 
-.menu-management-fields-compact {
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-}
-
 .menu-management-fields-single {
   grid-template-columns: minmax(0, 1fr);
-}
-
-.menu-management-form .form-floating:focus-within {
-  z-index: 2;
 }
 
 .menu-management-totals {
@@ -246,7 +234,6 @@
 
   .menu-management-product-fields,
   .menu-management-product-actions,
-  .menu-management-fields-compact,
   .menu-management-actions-compact,
   .menu-management-fields-single {
     grid-template-columns: 1fr;

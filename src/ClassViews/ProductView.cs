@@ -189,7 +189,7 @@
                 ParseDecimal(this.txtCarbs.Text),
                 ParseDecimal(this.txtFat.Text),
                 this.txtUnit.Text.Trim(),
-                this.selectedProductId == 0 ? true : this.selectedProductIsActive);
+                this.selectedProductId == 0 || this.selectedProductIsActive);
         }
 
         private static bool TryParseDecimal(string value, out decimal result)

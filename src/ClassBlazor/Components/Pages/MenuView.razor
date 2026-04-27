@@ -15,7 +15,7 @@ else
 {
     <div class="menu-management-shell">
 
-        <section class="menu-management-summary">
+        <section>
             <div class="menu-management-summary-card">
                 <h2 class="h5 mb-3">Current Totals</h2>
                 <div class="menu-management-totals">
@@ -38,7 +38,7 @@ else
                 </div>
             </div>
         </section>
-        <section class="menu-management-form">
+        <section>
             @if (!string.IsNullOrWhiteSpace(message))
             {
                 <p class="@MessageClass">@message</p>
@@ -485,7 +485,6 @@ else
         selectedPendingProductIndex = index;
         PopulatePendingProductEditor(index);
         ClearMessage();
-        StateHasChanged();
     }
 
     private void RemoveProduct()

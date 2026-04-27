@@ -292,7 +292,7 @@ else
             ParseDecimal(carbs),
             ParseDecimal(fat),
             unit.Trim(),
-            selectedProductId == 0 ? true : selectedProductIsActive);
+            selectedProductId == 0 || selectedProductIsActive);
     }
 
     private void SelectProduct(Product product)
