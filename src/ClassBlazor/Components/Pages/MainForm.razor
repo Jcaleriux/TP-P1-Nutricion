@@ -3,14 +3,10 @@
 @inject NavigationManager Navigation
 @inject SessionService SessionService
 
-<PageTitle>Main Form</PageTitle>
-
-<h1>Nutrition For Everyone</h1>
-
-@if (SessionService.CurrentUser?.Role == "Admin")
-{
-    <p>Modo administrador</p>
-}
+<PageTitle>Main Page</PageTitle>
+<HeadContent>
+    <link rel="stylesheet" href="/css/MainForm.css" />
+</HeadContent>
 
 @if (SessionService.CurrentUser is null)
 {
@@ -19,31 +15,115 @@
 }
 else
 {
-    <p>@WelcomeMessage</p>
+    <main class="main-form-layout d-flex flex-nowrap">
+        <div class="main-form-sidebar d-flex flex-column flex-shrink-0 p-3">
+            <a href="/main" class="main-form-brand d-flex align-items-center text-decoration-none">
+                <img class="main-form-brand-logo" src="/images/logo.png" alt="Logo NutriMenu" width="50" height="50" />
+                <span class="main-form-brand-title fs-2 fw-bold">NutriMenu</span>
+            </a>
 
-    <button @onclick="GoToProducts">Manage Products</button>
-    <button @onclick="GoToMenus">Manage Menus</button>
-    <button @onclick="GoToNutrition">Nutrition Info</button>
-    <button @onclick="GoToStatistics">Statistics</button>
-    if (SessionService.CurrentUser.Role == "Admin")
-    {
-        <button @onclick="GoToUserManagement">User Management</button>
-    }
-    <button @onclick="Logout">Cerrar sesión</button>
+            <hr />
 
-    @if (!string.IsNullOrWhiteSpace(message))
-    {
-        <p>@message</p>
-    }
+            <ul class="nav nav-pills flex-column mb-auto">
+                <li class="nav-item">
+                    <a @onclick="ShowHome" href="#" class="@GetNavLinkClass(ViewSection.Home)" aria-current="page">
+                        <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
+                            <use xlink:href="#home"></use>
+                        </svg>
+                        Home
+                    </a>
+                </li>
+                <li>
+                    <a @onclick="GoToProducts" href="#" class="main-form-nav-link nav-link">
+                        <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
+                            <use xlink:href="#speedometer2"></use>
+                        </svg>
+                        Products
+                    </a>
+                </li>
+                <li>
+                    <a @onclick="GoToMenus" href="#" class="main-form-nav-link nav-link">
+                        <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
+                            <use xlink:href="#table"></use>
+                        </svg>
+                        Menus
+                    </a>
+                </li>
+                <li>
+                    <a @onclick="GoToStatistics" href="#" class="main-form-nav-link nav-link">
+                        <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
+                            <use xlink:href="#grid"></use>
+                        </svg>
+                        Statistics
+                    </a>
+                </li>
+                @if (IsAdmin)
+                {
+                    <li>
+                        <a @onclick="GoToUserManagement" href="#" class="main-form-nav-link nav-link">
+                            <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
+                                <use xlink:href="#people-circle"></use>
+                            </svg>
+                            User Management
+                        </a>
+                    </li>
+                }
+            </ul>
+
+            <hr />
+
+            <div class="dropdown">
+                <a href="#" class="main-form-user-link d-flex align-items-center text-decoration-none dropdown-toggle"
+                       data-bs-toggle="dropdown" aria-expanded="false">
+                    <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
+                        <use xlink:href="#people-circle"></use>
+                    </svg>
+                    <strong class="fs-4">@UserName</strong>
+                </a>
+                <ul class="dropdown-menu text-small shadow">
+                    <li><a @onclick="Logout" class="dropdown-item" href="#">Sign out</a></li>
+                </ul>
+            </div>
+        </div>
+
+        <section class="main-form-content flex-grow-1 p-4">
+            <div class="main-form-header">
+                <h3 class="main-form-welcome mb-4">@WelcomeMessage</h3>
+            </div>
+
+            <div class="main-form-body">
+                @switch (CurrentSection)
+                {
+                    case ViewSection.Home:
+                        <div class="main-form-panel">
+                            <NutritionInfoView />
+                        </div>
+                        break;
+                    default:
+                        <div class="main-form-panel">
+                            <p>Select an option from the sidebar.</p>
+                        </div>
+                        break;
+                }
+            </div>
+        </section>
+    </main>
 }
 
 @code {
-    private string message = string.Empty;
+    private ViewSection CurrentSection = ViewSection.Home;
+
+    private string UserName =>
+        SessionService.CurrentUser is null
+            ? string.Empty
+            : SessionService.CurrentUser.Name;
 
     private string WelcomeMessage =>
         SessionService.CurrentUser is null
             ? "Welcome"
-            : $"Welcome {SessionService.CurrentUser.Name}";
+            : $"Welcome {SessionService.CurrentUser.Name}!";
+
+    private bool IsAdmin => SessionService.CurrentUser?.Role == "Admin";
 
     protected override void OnInitialized()
     {
@@ -68,9 +148,9 @@ else
         Navigation.NavigateTo("/menus");
     }
 
-    private void GoToNutrition()
+    private void ShowHome()
     {
-        Navigation.NavigateTo("/nutritionInfo");
+        CurrentSection = ViewSection.Home;
     }
 
     private void GoToStatistics()
@@ -87,5 +167,17 @@ else
     private void GoToUserManagement()
     {
         Navigation.NavigateTo("/user-management");
+    }
+
+    private string GetNavLinkClass(ViewSection section)
+    {
+        return CurrentSection == section
+            ? "main-form-nav-link nav-link active"
+            : "main-form-nav-link nav-link";
+    }
+
+    private enum ViewSection
+    {
+        Home
     }
 }

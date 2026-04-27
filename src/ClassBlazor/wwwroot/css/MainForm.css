@@ -1,0 +1,99 @@
+html,
+body {
+  height: 100%;
+}
+
+body {
+  min-height: 100vh;
+}
+
+.main-form-layout {
+  min-height: 100vh;
+}
+
+.main-form-sidebar {
+  width: 280px;
+  min-height: 100vh;
+  background-color: rgba(var(--bs-success-rgb), 0.12);
+  border-right: 1px solid rgba(var(--bs-success-rgb), 0.2);
+}
+
+.main-form-content {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background-color: var(--bs-body-bg);
+}
+
+.main-form-header {
+  width: 100%;
+  margin-bottom: 2rem;
+}
+
+.main-form-welcome {
+  margin: 0;
+  text-align: center;
+  color: var(--bs-success);
+}
+
+.main-form-body {
+  display: flex;
+  flex: 1;
+  align-items: center;
+  justify-content: center;
+}
+
+.main-form-panel {
+  width: 100%;
+  max-width: 720px;
+  text-align: center;
+}
+
+.main-form-brand {
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+  color: var(--bs-success);
+}
+
+.main-form-brand-logo {
+  display: block;
+  flex-shrink: 0;
+  border-radius: 0.5rem;
+}
+
+.main-form-brand-title {
+  line-height: 1.1;
+}
+
+.main-form-nav-link {
+  color: var(--bs-success);
+}
+
+.main-form-nav-link:hover,
+.main-form-nav-link:focus {
+  color: var(--bs-success);
+  background-color: rgba(var(--bs-success-rgb), 0.14);
+}
+
+.nav-pills .main-form-nav-link.active,
+.nav-pills .show > .main-form-nav-link {
+  color: var(--bs-white);
+  background-color: var(--bs-success);
+}
+
+.main-form-user-link {
+  color: var(--bs-success);
+}
+
+.main-form-message {
+  margin-bottom: 0;
+}
+
+.dropdown-toggle {
+  outline: 0;
+}
+
+.bi {
+  vertical-align: -0.125em;
+  fill: currentColor;
+}
