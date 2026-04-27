@@ -1,5 +1,3 @@
-@page "/menus"
-
 @inject MenuController MenuController
 @inject ProductController ProductController
 @inject NavigationManager Navigation
@@ -7,124 +5,192 @@
 
 <PageTitle>Menu Management</PageTitle>
 
-<h1>Menu Management</h1>
-
 @if (SessionService.CurrentUser is null)
 {
-    <button @onclick="GoToLogin">Go to login</button>
+    <p>Redirecting...</p>
 }
 else
 {
-    <div>
-        <label>Date</label>
-        <input type="date" value="@menuDateText" @onchange="OnMenuDateChanged" />
-    </div>
+    <div class="menu-management-shell">
+        <section class="menu-management-form">
+            <h1 class="h3 mb-3 fw-normal">Menu Management</h1>
 
-    <div>
-        <label>Meal time</label>
-        <select @bind="selectedMealTime">
-            @foreach (var mealTime in mealTimes)
+            @if (!string.IsNullOrWhiteSpace(message))
             {
-                <option value="@mealTime">@mealTime</option>
+                <p class="menu-management-message mt-3 mb-0">@message</p>
             }
-        </select>
+        </section>
+
+        <section class="menu-management-summary">
+            <div class="menu-management-summary-card">
+                <h2 class="h5 mb-3">Current Totals</h2>
+                <div class="menu-management-totals">
+                    <div>
+                        <span class="menu-management-total-label">Calories</span>
+                        <strong>@CurrentTotals.Calories.ToString("F2", CultureInfo.InvariantCulture)</strong>
+                    </div>
+                    <div>
+                        <span class="menu-management-total-label">Protein</span>
+                        <strong>@CurrentTotals.Protein.ToString("F2", CultureInfo.InvariantCulture)</strong>
+                    </div>
+                    <div>
+                        <span class="menu-management-total-label">Carbs</span>
+                        <strong>@CurrentTotals.Carbs.ToString("F2", CultureInfo.InvariantCulture)</strong>
+                    </div>
+                    <div>
+                        <span class="menu-management-total-label">Fat</span>
+                        <strong>@CurrentTotals.Fat.ToString("F2", CultureInfo.InvariantCulture)</strong>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section class="menu-management-grid">
+            <div class="menu-management-table-section">
+                <div class="menu-management-table-header">
+                    <h2 class="h5 mb-0">Products In Menu</h2>
+                    <span class="menu-management-table-caption">Select a row to edit or remove that product from the current menu.</span>
+                </div>
+
+                <div class="table-responsive menu-table-scroll">
+                    <table class="table table-striped menu-table">
+                        <thead>
+                            <tr>
+                                <th>Meal Time</th>
+                                <th>Product</th>
+                                <th>Quantity</th>
+                                <th>Calories</th>
+                                <th>Protein</th>
+                                <th>Carbs</th>
+                                <th>Fat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (pendingProductRows.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="7" class="text-center text-muted">No products added yet.</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @for (var index = 0; index < pendingProductRows.Count; index++)
+                                {
+                                    var row = pendingProductRows[index];
+                                    <tr @key="row" class="@GetPendingRowClass(index)" @onclick="@(() => SelectPendingProduct(index))">
+                                        <td>@row.MealTime</td>
+                                        <td>@row.ProductName</td>
+                                        <td>@row.Quantity</td>
+                                        <td>@row.Calories</td>
+                                        <td>@row.Protein</td>
+                                        <td>@row.Carbs</td>
+                                        <td>@row.Fat</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="menu-management-fields menu-management-fields-compact">
+                    <div class="form-floating">
+                        <select @bind="selectedProductId" class="form-select" id="menuProduct">
+                            <option value="0">Select a product</option>
+                            @foreach (var product in products)
+                            {
+                                <option value="@product.ProductId">@product.Name</option>
+                            }
+                        </select>
+                        <label for="menuProduct">Product</label>
+                    </div>
+
+                    <div class="form-floating">
+                        <input @bind="quantityText" type="text" class="form-control" id="menuQuantity" placeholder="1.5" />
+                        <label for="menuQuantity">Quantity</label>
+                    </div>
+                </div>
+
+                <div class="menu-management-actions menu-management-actions-compact">
+                    <button @onclick="AddProduct" class="btn btn-success w-100 py-2" type="button">Add product</button>
+                    <button @onclick="UpdatePendingProduct" class="btn btn-outline-success w-100 py-2" type="button" disabled="@(selectedPendingProductIndex < 0)">Update selected product</button>
+                    <button @onclick="RemoveProduct" class="btn btn-outline-danger w-100 py-2" type="button" disabled="@(selectedPendingProductIndex < 0)">Remove selected product</button>
+                    <button @onclick="ClearProductEditor" class="btn btn-outline-secondary w-100 py-2" type="button">Clear product form</button>
+                </div>
+
+                <p class="menu-management-selection-note mb-0">
+                    @PendingSelectionText
+                </p>
+            </div>
+
+            <div class="menu-management-table-section">
+                <div class="menu-management-table-header">
+                    <h2 class="h5 mb-0">Saved Menus</h2>
+                    <span class="menu-management-table-caption">Select a menu to load it into the editor. Update saves the whole menu; delete removes the whole menu.</span>
+                </div>
+
+                <div class="table-responsive menu-table-scroll">
+                    <table class="table table-striped menu-table">
+                        <thead>
+                            <tr>
+                                <th>Id</th>
+                                <th>Date</th>
+                                <th>Calories</th>
+                                <th>Protein</th>
+                                <th>Carbs</th>
+                                <th>Fat</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (menus.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">No menus registered yet.</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var menu in menus)
+                                {
+                                    <tr class="@GetMenuRowClass(menu)" @onclick="@(() => SelectMenu(menu.MenuId))">
+                                        <td>@menu.MenuId</td>
+                                        <td>@menu.Date</td>
+                                        <td>@menu.Calories</td>
+                                        <td>@menu.Protein</td>
+                                        <td>@menu.Carbs</td>
+                                        <td>@menu.Fat</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="menu-management-fields menu-management-fields-compact">
+                    <div class="form-floating">
+                        <input type="date" value="@menuDateText" @onchange="OnMenuDateChanged" class="form-control" id="menuDate" />
+                        <label for="menuDate">Date</label>
+                    </div>
+
+                    <div class="form-floating">
+                        <select @bind="selectedMealTime" class="form-select" id="menuMealTime">
+                            @foreach (var mealTime in mealTimes)
+                            {
+                                <option value="@mealTime">@mealTime</option>
+                            }
+                        </select>
+                        <label for="menuMealTime">Meal time</label>
+                    </div>
+                </div>
+
+                <div class="menu-management-actions menu-management-actions-compact">
+                    <button @onclick="CreateMenu" class="btn btn-success w-100 py-2" type="button">Create menu</button>
+                    <button @onclick="UpdateMenu" class="btn btn-outline-success w-100 py-2" type="button" disabled="@(selectedMenuId == 0)">Update menu</button>
+                    <button @onclick="DeleteMenu" class="btn btn-outline-danger w-100 py-2" type="button" disabled="@(selectedMenuId == 0)">Delete menu</button>
+                    <button @onclick="Clear" class="btn btn-outline-secondary w-100 py-2" type="button">Clear all</button>
+                </div>
+            </div>
+        </section>
     </div>
-
-    <div>
-        <label>Product</label>
-        <select @bind="selectedProductId">
-            <option value="0">Select a product</option>
-            @foreach (var product in products)
-            {
-                <option value="@product.ProductId">@product.Name</option>
-            }
-        </select>
-    </div>
-
-    <div>
-        <label>Quantity</label>
-        <input @bind="quantityText" />
-    </div>
-
-    <button @onclick="AddProduct">Add product</button>
-    <button @onclick="RemoveProduct" disabled="@(selectedPendingProductIndex < 0)">Remove product</button>
-    <button @onclick="CreateMenu">Create</button>
-    <button @onclick="UpdateMenu" disabled="@(selectedMenuId == 0)">Update</button>
-    <button @onclick="DeleteMenu" disabled="@(selectedMenuId == 0)">Delete</button>
-    <button @onclick="Clear">Clear</button>
-    <button @onclick="GoToMain">Back</button>
-
-    @if (!string.IsNullOrWhiteSpace(message))
-    {
-        <p>@message</p>
-    }
-
-    <p>@TotalsText</p>
-
-    <h2>Menus</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Id</th>
-                <th>Date</th>
-                <th>Calories</th>
-                <th>Protein</th>
-                <th>Carbs</th>
-                <th>Fat</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var menu in menus)
-            {
-                <tr>
-                    <td>@menu.MenuId</td>
-                    <td>@menu.Date</td>
-                    <td>@menu.Calories</td>
-                    <td>@menu.Protein</td>
-                    <td>@menu.Carbs</td>
-                    <td>@menu.Fat</td>
-                    <td>
-                        <button @onclick="@(() => SelectMenu(menu.MenuId))">Select</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
-
-    <h2>Selected Products</h2>
-    <table>
-        <thead>
-            <tr>
-                <th>Meal Time</th>
-                <th>Product</th>
-                <th>Quantity</th>
-                <th>Calories</th>
-                <th>Protein</th>
-                <th>Carbs</th>
-                <th>Fat</th>
-                <th></th>
-            </tr>
-        </thead>
-        <tbody>
-            @for (var index = 0; index < pendingProductRows.Count; index++)
-            {
-                var row = pendingProductRows[index];
-                <tr>
-                    <td>@row.MealTime</td>
-                    <td>@row.ProductName</td>
-                    <td>@row.Quantity</td>
-                    <td>@row.Calories</td>
-                    <td>@row.Protein</td>
-                    <td>@row.Carbs</td>
-                    <td>@row.Fat</td>
-                    <td>
-                        <button @onclick="@(() => SelectPendingProduct(index))">Select</button>
-                    </td>
-                </tr>
-            }
-        </tbody>
-    </table>
 }
 
 @code {
@@ -141,15 +207,10 @@ else
     private string quantityText = string.Empty;
     private string menuDateText = DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
     private string message = string.Empty;
-
-    private string TotalsText
-    {
-        get
-        {
-            var totals = MenuController.CalculateTotals(pendingMenuProducts);
-            return $"Totals - Calories: {totals.Calories:F2} | Protein: {totals.Protein:F2} | Carbs: {totals.Carbs:F2} | Fat: {totals.Fat:F2}";
-        }
-    }
+    private (decimal Calories, decimal Protein, decimal Carbs, decimal Fat) CurrentTotals => MenuController.CalculateTotals(pendingMenuProducts);
+    private string PendingSelectionText => selectedPendingProductIndex >= 0 && selectedPendingProductIndex < pendingProductRows.Count
+        ? $"Selected product: {pendingProductRows[selectedPendingProductIndex].ProductName} ({pendingProductRows[selectedPendingProductIndex].MealTime})"
+        : "No product selected from the current menu.";
 
     protected override void OnInitialized()
     {
@@ -216,31 +277,32 @@ else
 
     private void AddProduct()
     {
-        if (selectedProductId == 0)
+        if (!TryBuildPendingProduct(out var pendingProduct))
         {
-            message = "Select a product.";
             return;
         }
 
-        var selectedProduct = products.FirstOrDefault(product => product.ProductId == selectedProductId);
-
-        if (selectedProduct is null)
-        {
-            message = "The selected product is not available.";
-            return;
-        }
-
-        if (!TryParseDecimal(quantityText, out var quantity) || quantity <= 0)
-        {
-            message = "Quantity must be a valid number greater than zero.";
-            return;
-        }
-
-        pendingMenuProducts.Add(new MenuProduct(0, 0, selectedMealTime, selectedProductId, quantity));
-        selectedPendingProductIndex = -1;
-        selectedProductId = 0;
-        quantityText = string.Empty;
+        pendingMenuProducts.Add(pendingProduct);
+        ClearProductSelection();
         message = string.Empty;
+        LoadPendingProducts();
+    }
+
+    private void UpdatePendingProduct()
+    {
+        if (selectedPendingProductIndex < 0 || selectedPendingProductIndex >= pendingMenuProducts.Count)
+        {
+            message = "Select a product from the current menu first.";
+            return;
+        }
+
+        if (!TryBuildPendingProduct(out var pendingProduct))
+        {
+            return;
+        }
+
+        pendingMenuProducts[selectedPendingProductIndex] = pendingProduct;
+        message = "Product in menu updated successfully.";
         LoadPendingProducts();
     }
 
@@ -338,8 +400,7 @@ else
         }
 
         selectedMealTime = mealTimes[0];
-        selectedProductId = 0;
-        quantityText = string.Empty;
+        ClearProductSelection();
         message = string.Empty;
         LoadPendingProducts();
     }
@@ -357,6 +418,7 @@ else
         selectedProductId = selectedProduct.ProductId;
         quantityText = selectedProduct.Quantity.ToString(CultureInfo.InvariantCulture);
         message = string.Empty;
+        StateHasChanged();
     }
 
     private void RemoveProduct()
@@ -368,11 +430,15 @@ else
         }
 
         pendingMenuProducts.RemoveAt(selectedPendingProductIndex);
-        selectedPendingProductIndex = -1;
-        selectedProductId = 0;
-        quantityText = string.Empty;
+        ClearProductSelection();
         message = string.Empty;
         LoadPendingProducts();
+    }
+
+    private void ClearProductEditor()
+    {
+        ClearProductSelection();
+        message = string.Empty;
     }
 
     private void Clear()
@@ -384,28 +450,65 @@ else
     private void ResetEditor()
     {
         selectedMenuId = 0;
-        selectedPendingProductIndex = -1;
-        selectedProductId = 0;
         selectedMealTime = mealTimes[0];
-        quantityText = string.Empty;
+        ClearProductSelection();
         menuDateText = DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
         pendingMenuProducts.Clear();
         LoadPendingProducts();
     }
 
-    private void GoToMain()
-    {
-        Navigation.NavigateTo("/main");
-    }
-
-    private void GoToLogin()
-    {
-        Navigation.NavigateTo("/");
-    }
-
     private void OnMenuDateChanged(ChangeEventArgs e)
     {
         menuDateText = e.Value?.ToString() ?? DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+    }
+
+    private string GetPendingRowClass(int index)
+    {
+        return selectedPendingProductIndex == index
+            ? "menu-row menu-row-selected"
+            : "menu-row";
+    }
+
+    private string GetMenuRowClass(MenuGridItem menu)
+    {
+        return selectedMenuId == menu.MenuId
+            ? "menu-row menu-row-selected"
+            : "menu-row";
+    }
+
+    private bool TryBuildPendingProduct(out MenuProduct pendingProduct)
+    {
+        pendingProduct = default!;
+
+        if (selectedProductId == 0)
+        {
+            message = "Select a product.";
+            return false;
+        }
+
+        var selectedProduct = products.FirstOrDefault(product => product.ProductId == selectedProductId);
+
+        if (selectedProduct is null)
+        {
+            message = "The selected product is not available.";
+            return false;
+        }
+
+        if (!TryParseDecimal(quantityText, out var quantity) || quantity <= 0)
+        {
+            message = "Quantity must be a valid number greater than zero.";
+            return false;
+        }
+
+        pendingProduct = new MenuProduct(0, 0, selectedMealTime, selectedProductId, quantity);
+        return true;
+    }
+
+    private void ClearProductSelection()
+    {
+        selectedPendingProductIndex = -1;
+        selectedProductId = 0;
+        quantityText = string.Empty;
     }
 
     private static bool TryParseDecimal(string value, out decimal result)
