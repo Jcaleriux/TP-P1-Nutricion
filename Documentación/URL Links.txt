@@ -1,0 +1,2 @@
+https://github.com/Jcaleriux/TP-P1-Nutricion
+https://calerosmore.atlassian.net/jira/software/projects/SCRUM/list?jql=project%20%3D%20SCRUM%20ORDER%20BY%20cf%5B10019%5D%20ASC
