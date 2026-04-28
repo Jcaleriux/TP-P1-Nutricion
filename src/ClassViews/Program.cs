@@ -34,11 +34,10 @@ namespace ClassViews
             var userController = new UserController(userRepository);
             var loginController = new LoginController(userController);
 
-            var productRepository = new ProductRepository(ConfigurationItems.ProductsFilePath);
-            var productController = new ProductController(productRepository);
-
             var menuRepository = new MenuRepository(ConfigurationItems.MenusFilePath);
             var menuProductRepository = new MenuProductRepository(ConfigurationItems.MenuProductsFilePath);
+            var productRepository = new ProductRepository(ConfigurationItems.ProductsFilePath);
+            var productController = new ProductController(productRepository, menuRepository, menuProductRepository);
             var menuController = new MenuController(menuRepository, menuProductRepository, productController);
 
             var nutritionStatisticsController = new NutritionStatisticsController(menuController);
