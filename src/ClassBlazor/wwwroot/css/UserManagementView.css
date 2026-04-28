@@ -1,0 +1,125 @@
+.user-management-shell {
+  display: grid;
+  gap: 2rem;
+}
+
+.user-management-form {
+  max-width: 720px;
+  margin-inline: auto;
+  width: 100%;
+}
+
+.user-management-fields {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.user-management-password-field {
+  grid-column: 1 / -1;
+}
+
+.user-management-form .form-floating:focus-within {
+  z-index: 2;
+}
+
+.user-management-actions {
+  display: grid;
+  grid-template-columns: repeat(4, minmax(0, 1fr));
+  gap: 0.5rem;
+}
+
+.user-management-message {
+  text-align: center;
+}
+
+.user-management-message-error {
+  color: #dc3545;
+}
+
+.user-management-message-success {
+  color: var(--bs-success);
+}
+
+.user-management-note,
+.user-management-selection-note {
+  margin: 0 auto;
+  max-width: 720px;
+  text-align: center;
+  color: var(--bs-secondary-color);
+}
+
+.user-management-table-section {
+  width: 100%;
+  background-color: rgba(var(--bs-light-rgb), 0.55);
+  border: 1px solid rgba(var(--bs-success-rgb), 0.12);
+  border-radius: 1rem;
+}
+
+.user-table {
+  margin-top: 0;
+  margin-bottom: 0;
+}
+
+.user-table .user-row {
+  cursor: pointer;
+}
+
+.user-table .user-row:hover > * {
+  background-color: rgba(var(--bs-success-rgb), 0.14);
+}
+
+.user-table .user-row.user-row-selected > * {
+  background-color: rgba(var(--bs-success-rgb), 0.22);
+}
+
+.user-table .user-row.user-row-inactive > * {
+  color: var(--bs-secondary-color);
+  background-color: rgba(var(--bs-secondary-rgb), 0.12);
+}
+
+.user-pagination-nav {
+  margin-top: 1rem;
+  display: flex;
+  justify-content: center;
+}
+
+.user-pagination .page-link {
+  color: var(--bs-success);
+  border-color: rgba(var(--bs-success-rgb), 0.3);
+  background-color: var(--bs-body-bg);
+}
+
+.user-pagination .page-link:hover,
+.user-pagination .page-link:focus {
+  color: var(--bs-success);
+  background-color: rgba(var(--bs-success-rgb), 0.12);
+  border-color: rgba(var(--bs-success-rgb), 0.45);
+  box-shadow: 0 0 0 0.2rem rgba(var(--bs-success-rgb), 0.15);
+}
+
+.user-pagination .page-item.active .page-link {
+  color: var(--bs-white);
+  background-color: var(--bs-success);
+  border-color: var(--bs-success);
+}
+
+.user-pagination .page-item.disabled .page-link {
+  color: rgba(var(--bs-success-rgb), 0.45);
+  background-color: rgba(var(--bs-success-rgb), 0.05);
+  border-color: rgba(var(--bs-success-rgb), 0.15);
+}
+
+@media (max-width: 576px) {
+  .user-management-fields {
+    grid-template-columns: 1fr;
+  }
+
+  .user-management-actions {
+    grid-template-columns: 1fr;
+  }
+
+  .user-management-table-section {
+    padding: 0.75rem;
+  }
+}

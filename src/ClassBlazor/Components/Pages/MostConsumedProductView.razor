@@ -1,61 +1,61 @@
-﻿@page "/most-consumed"
-
 @inject SessionService SessionService
-@inject NavigationManager Navigation
 @inject ProductController ProductController
 
-<h3>Most Consumed Product</h3>
+<PageTitle>Most Consumed Product</PageTitle>
 
 @if (SessionService.CurrentUser?.Role != "Admin")
 {
-    <p>Access denied</p>
+    <p class="most-consumed-message most-consumed-message-error">Access denied.</p>
 }
 else
 {
-    <div>
-        <label>Start date:</label>
-        <input type="date" @bind="startDate" />
-        
-    </div>
+    <section class="most-consumed-shell">
+        <h3 class="main-form-welcome mb-4">Most Consumed Product</h3>
 
-    <div>
-        <label>End date:</label>
-        <input type="date" @bind="endDate" />
-    </div>
+        <p class="most-consumed-note">
+            Select a date range to see which product was consumed the most.
+        </p>
 
-    <button @onclick="Calculate">Calculate</button>
+        <div class="most-consumed-fields">
+            <div class="form-floating">
+                <input type="date" @bind="startDate" class="form-control" id="mostConsumedStartDate" />
+                <label for="mostConsumedStartDate">Start date</label>
+            </div>
 
-    @if (!string.IsNullOrEmpty(result))
-    {
-        <p>@result</p>
-    }
+            <div class="form-floating">
+                <input type="date" @bind="endDate" class="form-control" id="mostConsumedEndDate" />
+                <label for="mostConsumedEndDate">End date</label>
+            </div>
+        </div>
 
-    <button @onclick="GoBack">Back</button>
+        <div class="most-consumed-actions">
+            <button @onclick="Calculate" class="btn btn-success w-100 py-2" type="button">
+                Calculate
+            </button>
+        </div>
+
+        @if (!string.IsNullOrWhiteSpace(result))
+        {
+            <p class="most-consumed-result mb-0">@result</p>
+        }
+    </section>
 }
 
 @code {
     private DateTime startDate = DateTime.Today;
     private DateTime endDate = DateTime.Today;
-    private string result = "";
-
-    protected override void OnInitialized()
-    {
-        if (SessionService.CurrentUser is null)
-        {
-            Navigation.NavigateTo("/");
-        }
-    }
-
+    private string result = string.Empty;
     private void Calculate()
     {
+        if (startDate > endDate)
+        {
+            result = "Start date cannot be later than end date.";
+            return;
+        }
+
         var product = ProductController.GetMostConsumedProduct(startDate, endDate);
         result = product != null
-            ? $"Most consumed product is the following: {product.Name}"
-            : "No data available";
-    }
-
-    private void GoBack()
-    {
-        Navigation.NavigateTo("/main");
+            ? $"Most consumed product: {product.Name}"
+            : "No data available for the selected range.";
     }
 }

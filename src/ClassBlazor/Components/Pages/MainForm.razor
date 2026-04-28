@@ -8,6 +8,8 @@
     <link rel="stylesheet" href="/css/MainForm.css" />
     <link rel="stylesheet" href="/css/ProductView.css" />
     <link rel="stylesheet" href="/css/MenuView.css" />
+    <link rel="stylesheet" href="/css/MostConsumedProductView.css" />
+    <link rel="stylesheet" href="/css/UserManagementView.css" />
     <link rel="stylesheet" href="/css/StatisticsView.css" />
 </HeadContent>
 
@@ -64,7 +66,8 @@ else
                 @if (IsAdmin)
                 {
                     <li>
-                        <button type="button" @onclick="GoToUserManagement" class="main-form-nav-link nav-link">
+                        <button type="button" @onclick="ShowUserManagement"
+                                class="@GetNavLinkClass(ViewSection.UserManagement)">
                             <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                                 <use xlink:href="#people-circle"></use>
                             </svg>
@@ -72,7 +75,8 @@ else
                         </button>
                     </li>
                     <li>
-                        <button type="button" @onclick="GoToMostConsumedProduct" class="main-form-nav-link nav-link">
+                        <button type="button" @onclick="ShowMostConsumedProduct"
+                                class="@GetNavLinkClass(ViewSection.MostConsumedProduct)">
                             <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                                 <use xlink:href="#bar-chart"></use>
                             </svg>
@@ -128,6 +132,16 @@ else
                     case ViewSection.Statistics:
                         <div class="main-form-panel main-form-panel-wide">
                             <StatisticsView />
+                        </div>
+                        break;
+                    case ViewSection.UserManagement:
+                        <div class="main-form-panel main-form-panel-wide">
+                            <UserManagementView />
+                        </div>
+                        break;
+                    case ViewSection.MostConsumedProduct:
+                        <div class="main-form-panel">
+                            <MostConsumedProductView />
                         </div>
                         break;
                     default:
@@ -195,9 +209,9 @@ else
         Navigation.NavigateTo("/");
     }
 
-    private void GoToUserManagement()
+    private void ShowUserManagement()
     {
-        Navigation.NavigateTo("/user-management");
+        CurrentSection = ViewSection.UserManagement;
     }
 
     private string GetNavLinkClass(ViewSection section)
@@ -207,9 +221,9 @@ else
             : "main-form-nav-link nav-link";
     }
 
-    private void GoToMostConsumedProduct()
+    private void ShowMostConsumedProduct()
     {
-        Navigation.NavigateTo("/most-consumed");
+        CurrentSection = ViewSection.MostConsumedProduct;
     }
 
     private enum ViewSection
@@ -217,6 +231,8 @@ else
         Home,
         Products,
         Menus,
-        Statistics
+        UserManagement,
+        Statistics,
+        MostConsumedProduct
     }
 }
