@@ -4,21 +4,27 @@
     using ClassModels;
 
     /// <summary>
-    /// Implements product-related operations.
+    /// Implements product-related operations such as registration, updating, activation, and deactivation.
     /// </summary>
     public class ProductController : IProductController
     {
         private readonly List<Product> products;
         private readonly IRepository<Product> repository;
+        private readonly IRepository<Menu> menuRepository;
+        private readonly IRepository<MenuProduct> menuProductRepository;
 
         /// <summary>
         /// Initializes a new instance of the <see cref="ProductController"/> class.
         /// </summary>
-        /// <param name="repository">The product repository.</param>
-        public ProductController(IRepository<Product> repository)
+        /// <param name="repository">The repository for product data access.</param>
+        /// <param name="menuRepository">The repository for menu data access.</param>
+        /// <param name="menuProductRepository">The repository for menu-product data access.</param>
+        public ProductController(IRepository<Product> repository, IRepository<Menu> menuRepository, IRepository<MenuProduct> menuProductRepository)
         {
             this.repository = repository;
             this.products = repository.LoadData();
+            this.menuRepository = menuRepository;
+            this.menuProductRepository = menuProductRepository;
         }
 
         /// <summary>
@@ -121,6 +127,40 @@
         public bool ActivateProduct(int productId, User user)
         {
             return this.SetProductStatus(productId, true, user, "activate");
+        }
+        /// <summary>
+        /// Gets the most consumed product for a user within a specified date range.
+        /// </summary>
+        public Product? GetMostConsumedProduct(DateTime startDate, DateTime endDate)
+        {
+            var menusInRange = this.menuRepository.LoadData()
+                .Where(m => m.Date.Date >= startDate.Date && m.Date.Date <= endDate.Date)
+                .ToList();
+
+            if (!menusInRange.Any())
+            {
+                return null;
+            }
+
+            var menuIds = menusInRange.Select(m => m.MenuId).ToList();
+
+            var menuProducts = this.menuProductRepository.LoadData()
+                .Where(mp => menuIds.Contains(mp.MenuId))
+                .ToList();
+
+            if (!menuProducts.Any())
+            {
+                return null;
+            }
+
+            var mostConsumed = menuProducts
+                .GroupBy(mp => mp.ProductId)
+                .OrderByDescending(g => g.Count())
+                .First();
+
+            var productId = mostConsumed.Key;
+
+            return this.products.FirstOrDefault(p => p.ProductId == productId);
         }
 
         private bool ExistsProductName(string name, int excludedProductId)

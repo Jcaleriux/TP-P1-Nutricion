@@ -1,0 +1,61 @@
+﻿@page "/most-consumed"
+
+@inject SessionService SessionService
+@inject NavigationManager Navigation
+@inject ProductController ProductController
+
+<h3>Most Consumed Product</h3>
+
+@if (SessionService.CurrentUser?.Role != "Admin")
+{
+    <p>Access denied</p>
+}
+else
+{
+    <div>
+        <label>Start date:</label>
+        <input type="date" @bind="startDate" />
+        
+    </div>
+
+    <div>
+        <label>End date:</label>
+        <input type="date" @bind="endDate" />
+    </div>
+
+    <button @onclick="Calculate">Calculate</button>
+
+    @if (!string.IsNullOrEmpty(result))
+    {
+        <p>@result</p>
+    }
+
+    <button @onclick="GoBack">Back</button>
+}
+
+@code {
+    private DateTime startDate = DateTime.Today;
+    private DateTime endDate = DateTime.Today;
+    private string result = "";
+
+    protected override void OnInitialized()
+    {
+        if (SessionService.CurrentUser is null)
+        {
+            Navigation.NavigateTo("/");
+        }
+    }
+
+    private void Calculate()
+    {
+        var product = ProductController.GetMostConsumedProduct(startDate, endDate);
+        result = product != null
+            ? $"Most consumed product: {product.Name}"
+            : "No data available";
+    }
+
+    private void GoBack()
+    {
+        Navigation.NavigateTo("/main");
+    }
+}
