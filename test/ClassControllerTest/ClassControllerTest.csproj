@@ -8,4 +8,14 @@
     <UseVSTest>true</UseVSTest>
   </PropertyGroup>
 
+  <ItemGroup>
+    <ProjectReference Include="..\..\src\ClassController\ClassController.csproj" />
+    <ProjectReference Include="..\..\src\ClassModels\ClassModels.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="coverlet.collector" Version="6.0.2" />
+    <PackageReference Include="coverlet.msbuild" Version="6.0.2" />
+  </ItemGroup>
+
 </Project>
