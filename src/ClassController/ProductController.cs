@@ -133,33 +133,21 @@
         /// </summary>
         public Product? GetMostConsumedProduct(DateTime startDate, DateTime endDate)
         {
-            var menusInRange = this.menuRepository.LoadData()
-                .Where(m => m.Date.Date >= startDate.Date && m.Date.Date <= endDate.Date)
-                .ToList();
-
+            var menusInRange = this.menuRepository.LoadData().Where(m => m.Date.Date >= startDate.Date && m.Date.Date <= endDate.Date).ToList();
             if (!menusInRange.Any())
             {
                 return null;
             }
 
             var menuIds = menusInRange.Select(m => m.MenuId).ToList();
-
-            var menuProducts = this.menuProductRepository.LoadData()
-                .Where(mp => menuIds.Contains(mp.MenuId))
-                .ToList();
-
+            var menuProducts = this.menuProductRepository.LoadData().Where(mp => menuIds.Contains(mp.MenuId)).ToList();
             if (!menuProducts.Any())
             {
                 return null;
             }
 
-            var mostConsumed = menuProducts
-                .GroupBy(mp => mp.ProductId)
-                .OrderByDescending(g => g.Count())
-                .First();
-
+            var mostConsumed = menuProducts.GroupBy(mp => mp.ProductId).OrderByDescending(g => g.Sum(mp => mp.Quantity)).First();
             var productId = mostConsumed.Key;
-
             return this.products.FirstOrDefault(p => p.ProductId == productId);
         }
 

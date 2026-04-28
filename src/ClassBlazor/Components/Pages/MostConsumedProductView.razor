@@ -50,7 +50,7 @@ else
     {
         var product = ProductController.GetMostConsumedProduct(startDate, endDate);
         result = product != null
-            ? $"Most consumed product: {product.Name}"
+            ? $"Most consumed product is the following: {product.Name}"
             : "No data available";
     }
 
