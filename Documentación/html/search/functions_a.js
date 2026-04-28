@@ -1,0 +1,8 @@
+var searchData=
+[
+  ['update_0',['Update',['../interface_class_controller_1_1_abstractions_1_1_i_product_controller.html#a802245030e0e5d6c0b95b11286a784b7',1,'ClassController.Abstractions.IProductController.Update()'],['../class_class_controller_1_1_product_controller.html#a14622d2f25fd5cad10cb410bbb5183db',1,'ClassController.ProductController.Update()']]],
+  ['updatemenu_1',['UpdateMenu',['../interface_class_controller_1_1_abstractions_1_1_i_menu_controller.html#af3fe1e47b09d69582699aaf0840a1be2',1,'ClassController.Abstractions.IMenuController.UpdateMenu()'],['../class_class_controller_1_1_menu_controller.html#a6a3c54e1abe5b09cd9eed419c5fdfc49',1,'ClassController.MenuController.UpdateMenu()']]],
+  ['user_2',['User',['../class_class_models_1_1_user.html#ae583e2df72f7370d83b922ce03217109',1,'ClassModels.User.User(int UserId, string Name, string Email, string Password, string Goal, string ActivityLevel, decimal WeightKg, decimal HeightCm, int Age, string Sex, string DietType, string Role=&quot;User&quot;, bool IsActive=true)'],['../class_class_models_1_1_user.html#ad6a41a451426bbd212006d801984512b',1,'ClassModels.User.User(string[] userData)']]],
+  ['usercontroller_3',['UserController',['../class_class_controller_1_1_user_controller.html#a50f11b19f17c0115ec65e7f673f05704',1,'ClassController::UserController']]],
+  ['userrepository_4',['UserRepository',['../class_class_controller_1_1_user_repository.html#a103b7f111083b377505d11f807577c18',1,'ClassController::UserRepository']]]
+];

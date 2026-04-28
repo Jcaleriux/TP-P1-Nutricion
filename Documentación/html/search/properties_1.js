@@ -1,0 +1,11 @@
+var searchData=
+[
+  ['calories_0',['Calories',['../class_class_models_1_1_product.html#ac36f7351908b3cfe5c5fa4f970a9c698',1,'ClassModels::Product']]],
+  ['caloriesconsumed_1',['CaloriesConsumed',['../class_class_models_1_1_daily_nutrition_stats.html#a96e4f00cd21b8a02bd04ab922bd4d083',1,'ClassModels::DailyNutritionStats']]],
+  ['caloriesdifference_2',['CaloriesDifference',['../class_class_models_1_1_daily_nutrition_comparison.html#aaaef8f6c5162791d88e3d5531d1101f6',1,'ClassModels::DailyNutritionComparison']]],
+  ['caloriesgoal_3',['CaloriesGoal',['../class_class_models_1_1_daily_nutrition_comparison.html#a5b7ec96f792547eaff8225d0468412aa',1,'ClassModels::DailyNutritionComparison']]],
+  ['carbs_4',['Carbs',['../class_class_models_1_1_product.html#a5f131c70eb73fffaf34654e8affd48f2',1,'ClassModels::Product']]],
+  ['carbsconsumed_5',['CarbsConsumed',['../class_class_models_1_1_daily_nutrition_stats.html#a8233f18c9db6ae6dfd67ad4a112f6665',1,'ClassModels::DailyNutritionStats']]],
+  ['carbsdifference_6',['CarbsDifference',['../class_class_models_1_1_daily_nutrition_comparison.html#ab0695d0d318c0b419dc131a126985115',1,'ClassModels::DailyNutritionComparison']]],
+  ['carbsgoal_7',['CarbsGoal',['../class_class_models_1_1_daily_nutrition_comparison.html#a6d80b5f2fc0ade77824bcd92e1a3f8c2',1,'ClassModels::DailyNutritionComparison']]]
+];
