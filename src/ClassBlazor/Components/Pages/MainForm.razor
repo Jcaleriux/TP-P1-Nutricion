@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="/css/MainForm.css" />
     <link rel="stylesheet" href="/css/ProductView.css" />
     <link rel="stylesheet" href="/css/MenuView.css" />
+    <link rel="stylesheet" href="/css/StatisticsView.css" />
 </HeadContent>
 
 @if (SessionService.CurrentUser is null)
@@ -53,7 +54,7 @@ else
                     </button>
                 </li>
                 <li>
-                    <button type="button" @onclick="GoToStatistics" class="main-form-nav-link nav-link">
+                    <button type="button" @onclick="ShowStatistics" class="@GetNavLinkClass(ViewSection.Statistics)">
                         <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
                             <use xlink:href="#grid"></use>
                         </svg>
@@ -124,6 +125,11 @@ else
                             <MenuView />
                         </div>
                         break;
+                    case ViewSection.Statistics:
+                        <div class="main-form-panel main-form-panel-wide">
+                            <StatisticsView />
+                        </div>
+                        break;
                     default:
                         <div class="main-form-panel">
                             <p>Select an option from the sidebar.</p>
@@ -178,9 +184,9 @@ else
         CurrentSection = ViewSection.Menus;
     }
 
-    private void GoToStatistics()
+    private void ShowStatistics()
     {
-        Navigation.NavigateTo("/statistics");
+        CurrentSection = ViewSection.Statistics;
     }
 
     private void Logout()
@@ -210,6 +216,7 @@ else
     {
         Home,
         Products,
-        Menus
+        Menus,
+        Statistics
     }
 }

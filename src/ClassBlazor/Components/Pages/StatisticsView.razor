@@ -1,4 +1,4 @@
-@page "/statistics"
+@using System.Globalization
 @inject PdfService PdfService
 @inject IJSRuntime JS
 @inject NavigationManager Navigation
@@ -8,89 +8,232 @@
 
 <PageTitle>Statistics</PageTitle>
 
-<h1>Statistics</h1>
+<h1 class="statistics-view-title">Statistics</h1>
 
 @if (SessionService.CurrentUser is null)
 {
-    <button @onclick="GoToLogin">Go to login</button>
+    <p>Redirecting...</p>
 }
 else
 {
-    <div>
-        <label>Selected date</label>
-        <input type="date" value="@selectedDateText" @onchange="OnSelectedDateChanged" />
-        <button @onclick="LoadDaily">Load daily</button>
+    <div class="statistics-view-shell">
+        <section class="statistics-view-grid">
+            <section class="statistics-view-card statistics-view-card-daily">
+                <div class="statistics-view-section-header">
+                    <div>
+                        <h2 class="h5 mb-1">Daily statistics</h2>
+                        <p class="statistics-view-caption mb-0">Review one day at a time and compare intake against the goal.</p>
+                    </div>
+                </div>
+
+                <div class="statistics-view-daily-header">
+                    <div class="statistics-view-hero">
+                        <span class="statistics-view-hero-label">Daily status</span>
+                        <strong class="@DailyStatusClass">@dailyStatusText</strong>
+                        <p class="statistics-view-hero-note mb-0">@dailySelectionText</p>
+                    </div>
+
+                    <div class="statistics-view-daily-controls">
+                        <div class="statistics-view-fields statistics-view-fields-single">
+                            <div class="form-floating">
+                                <input type="date" value="@selectedDateText" @onchange="OnSelectedDateChanged" class="form-control" id="statisticsSelectedDate" />
+                                <label for="statisticsSelectedDate">Selected date</label>
+                            </div>
+                        </div>
+
+                        <div class="statistics-view-actions">
+                            <button @onclick="LoadDaily" class="btn btn-success w-100 py-2" type="button">Load daily</button>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="statistics-view-daily-grid">
+                    <article class="statistics-view-stat-item">
+                        <span class="statistics-view-stat-label">Consumed</span>
+                        <div class="table-responsive">
+                            <table class="table table-sm statistics-view-mini-table mb-0">
+                                <tbody>
+                                    @foreach (var metric in dailyConsumedRows)
+                                    {
+                                        <tr>
+                                            <th scope="row">@metric.Label</th>
+                                            <td>@metric.Value</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+                    <article class="statistics-view-stat-item">
+                        <span class="statistics-view-stat-label">Goals</span>
+                        <div class="table-responsive">
+                            <table class="table table-sm statistics-view-mini-table mb-0">
+                                <tbody>
+                                    @foreach (var metric in dailyGoalRows)
+                                    {
+                                        <tr>
+                                            <th scope="row">@metric.Label</th>
+                                            <td>@metric.Value</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+                    <article class="statistics-view-stat-item">
+                        <span class="statistics-view-stat-label">Difference</span>
+                        <div class="table-responsive">
+                            <table class="table table-sm statistics-view-mini-table mb-0">
+                                <tbody>
+                                    @foreach (var metric in dailyDifferenceRows)
+                                    {
+                                        <tr>
+                                            <th scope="row">@metric.Label</th>
+                                            <td>@metric.Value</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+                    <article class="statistics-view-stat-item">
+                        <span class="statistics-view-stat-label">Today progress</span>
+                        <div class="table-responsive">
+                            <table class="table table-sm statistics-view-mini-table mb-0">
+                                <tbody>
+                                    @foreach (var metric in todayProgressRows)
+                                    {
+                                        <tr>
+                                            <th scope="row">@metric.Label</th>
+                                            <td>@metric.Value</td>
+                                        </tr>
+                                    }
+                                </tbody>
+                            </table>
+                        </div>
+                    </article>
+                </div>
+            </section>
+
+            <section class="statistics-view-card statistics-view-card-range">
+                <div class="statistics-view-section-header">
+                    <div>
+                        <h2 class="h5 mb-1">Range statistics</h2>
+                        <p class="statistics-view-caption mb-0">Analyze progress across multiple days and export the current range to PDF.</p>
+                    </div>
+                </div>
+
+                <div class="statistics-view-fields">
+                    <div class="form-floating">
+                        <input type="date" value="@startDateText" @onchange="OnStartDateChanged" class="form-control" id="statisticsStartDate" />
+                        <label for="statisticsStartDate">Start date</label>
+                    </div>
+
+                    <div class="form-floating">
+                        <input type="date" value="@endDateText" @onchange="OnEndDateChanged" class="form-control" id="statisticsEndDate" />
+                        <label for="statisticsEndDate">End date</label>
+                    </div>
+                </div>
+
+                <div class="statistics-view-actions statistics-view-actions-split">
+                    <button @onclick="LoadRange" class="btn btn-success w-100 py-2" type="button">Load range</button>
+                    <button @onclick="LoadCurrentMonth" class="btn btn-outline-success w-100 py-2" type="button">Current month</button>
+                </div>
+
+                <div class="statistics-view-summary-grid">
+                    <article class="statistics-view-summary-item">
+                        <span class="statistics-view-summary-label">Days with menus</span>
+                        <strong>@daysWithMenusText</strong>
+                    </article>
+                    <article class="statistics-view-summary-item">
+                        <span class="statistics-view-summary-label">Days goal met</span>
+                        <strong>@daysGoalMetText</strong>
+                    </article>
+                    <article class="statistics-view-summary-item">
+                        <span class="statistics-view-summary-label">Days goal not met</span>
+                        <strong>@daysGoalNotMetText</strong>
+                    </article>
+                    <article class="statistics-view-summary-item">
+                        <span class="statistics-view-summary-label">Average calories</span>
+                        <strong>@averageCaloriesText</strong>
+                    </article>
+                </div>
+
+                <article class="statistics-view-summary-note">
+                    <span class="statistics-view-summary-label">Average macros</span>
+                    <strong>@averageMacrosText</strong>
+                </article>
+
+                <div class="table-responsive statistics-view-table-scroll">
+                    <table class="table table-striped statistics-view-table">
+                        <thead>
+                            <tr>
+                                <th>Date</th>
+                                <th>Calories</th>
+                                <th>Protein</th>
+                                <th>Carbs</th>
+                                <th>Fat</th>
+                                <th>Status</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @if (rangeRows.Count == 0)
+                            {
+                                <tr>
+                                    <td colspan="6" class="text-center text-muted">No statistics available for the selected range.</td>
+                                </tr>
+                            }
+                            else
+                            {
+                                @foreach (var item in rangeRows)
+                                {
+                                    <tr class="@GetRangeRowClass(item)" @onclick="@(() => SelectRangeRow(item))">
+                                        <td>@item.Date</td>
+                                        <td>@item.Calories</td>
+                                        <td>@item.Protein</td>
+                                        <td>@item.Carbs</td>
+                                        <td>@item.Fat</td>
+                                        <td>@item.Status</td>
+                                    </tr>
+                                }
+                            }
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="statistics-view-actions">
+                    <button @onclick="DownloadPdf" class="btn btn-outline-secondary w-100 py-2" type="button" disabled="@(rangeSummary is null)">Download PDF</button>
+                </div>
+            </section>
+        </section>
     </div>
-
-    <p>@dailyConsumedText</p>
-    <p>@dailyGoalsText</p>
-    <p>@dailyDifferenceText</p>
-    <p>@dailyStatusText</p>
-    <p>@todayProgressText</p>
-
-    <div>
-        <label>Start date</label>
-        <input type="date" value="@startDateText" @onchange="OnStartDateChanged" />
-    </div>
-
-    <div>
-        <label>End date</label>
-        <input type="date" value="@endDateText" @onchange="OnEndDateChanged" />
-        <button @onclick="LoadRange">Load range</button>
-        <button @onclick="LoadCurrentMonth">Current month</button>
-    </div>
-
-    <p>Days with menus: @daysWithMenusText</p>
-    <p>Days goal met: @daysGoalMetText</p>
-    <p>Days goal not met: @daysGoalNotMetText</p>
-    <p>Average calories: @averageCaloriesText</p>
-    <p>@averageMacrosText</p>
-
-    <table>
-        <thead>
-            <tr>
-                <th>Date</th>
-                <th>Calories</th>
-                <th>Protein</th>
-                <th>Carbs</th>
-                <th>Fat</th>
-                <th>Status</th>
-            </tr>
-        </thead>
-        <tbody>
-            @foreach (var item in rangeRows)
-            {
-                <tr>
-                    <td>@item.Date</td>
-                    <td>@item.Calories</td>
-                    <td>@item.Protein</td>
-                    <td>@item.Carbs</td>
-                    <td>@item.Fat</td>
-                    <td>@item.Status</td>
-                </tr>
-            }
-        </tbody>
-    </table>
-    <button @onclick="DownloadPdf">Download PDF</button>
-    <button @onclick="GoToMain">Back</button>
 }
 
 @code {
     private string selectedDateText = DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
     private string startDateText = new DateTime(DateTime.Today.Year, DateTime.Today.Month, 1).ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
     private string endDateText = DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
-    private string dailyConsumedText = string.Empty;
-    private string dailyGoalsText = string.Empty;
-    private string dailyDifferenceText = string.Empty;
     private string dailyStatusText = string.Empty;
-    private string todayProgressText = string.Empty;
+    private string dailySelectionText = "Selected date";
     private string daysWithMenusText = "0";
     private string daysGoalMetText = "0";
     private string daysGoalNotMetText = "0";
     private string averageCaloriesText = "0.00 kcal";
     private string averageMacrosText = string.Empty;
+    private DateTime? selectedRangeDate;
+    private List<MetricRow> dailyConsumedRows = [];
+    private List<MetricRow> dailyGoalRows = [];
+    private List<MetricRow> dailyDifferenceRows = [];
+    private List<MetricRow> todayProgressRows = [];
     private List<RangeStatisticsGridItem> rangeRows = [];
     private RangeNutritionSummary? rangeSummary;
+
+    private string DailyStatusClass => dailyStatusText switch
+    {
+        "Goal met" => "statistics-view-hero-value statistics-view-hero-value-success",
+        "Goal not met" => "statistics-view-hero-value statistics-view-hero-value-warning",
+        _ => "statistics-view-hero-value statistics-view-hero-value-muted",
+    };
 
     protected override void OnInitialized()
     {
@@ -129,15 +272,22 @@ else
     {
         var dailyComparison = NutritionStatisticsController.GetDailyComparison(SessionService.CurrentUser!, selectedDate);
 
-        dailyConsumedText =
-            $"Calories: {dailyComparison.CaloriesConsumed:F2} kcal | Protein: {dailyComparison.ProteinConsumed:F2} g | Carbs: {dailyComparison.CarbsConsumed:F2} g | Fat: {dailyComparison.FatConsumed:F2} g";
-
-        dailyGoalsText =
-            $"Calories: {dailyComparison.CaloriesGoal:F2} kcal | Protein: {dailyComparison.ProteinGoal:F2} g | Carbs: {dailyComparison.CarbsGoal:F2} g | Fat: {dailyComparison.FatGoal:F2} g";
-
-        dailyDifferenceText =
-            $"Calories: {FormatDifference(dailyComparison.CaloriesDifference, "kcal")} | Protein: {FormatDifference(dailyComparison.ProteinDifference, "g")} | Carbs: {FormatDifference(dailyComparison.CarbsDifference, "g")} | Fat: {FormatDifference(dailyComparison.FatDifference, "g")}";
-
+        dailySelectionText = $"Selected date: {selectedDate:dd-MM-yyyy}";
+        dailyConsumedRows = CreateMetricRows(
+            FormatAmount(dailyComparison.CaloriesConsumed, "kcal"),
+            FormatAmount(dailyComparison.ProteinConsumed, "g"),
+            FormatAmount(dailyComparison.CarbsConsumed, "g"),
+            FormatAmount(dailyComparison.FatConsumed, "g"));
+        dailyGoalRows = CreateMetricRows(
+            FormatAmount(dailyComparison.CaloriesGoal, "kcal"),
+            FormatAmount(dailyComparison.ProteinGoal, "g"),
+            FormatAmount(dailyComparison.CarbsGoal, "g"),
+            FormatAmount(dailyComparison.FatGoal, "g"));
+        dailyDifferenceRows = CreateMetricRows(
+            FormatDifference(dailyComparison.CaloriesDifference, "kcal"),
+            FormatDifference(dailyComparison.ProteinDifference, "g"),
+            FormatDifference(dailyComparison.CarbsDifference, "g"),
+            FormatDifference(dailyComparison.FatDifference, "g"));
         dailyStatusText = GetDailyStatusText(dailyComparison);
     }
 
@@ -145,8 +295,11 @@ else
     {
         var todayProgress = NutritionStatisticsController.GetTodayProgress(SessionService.CurrentUser!);
 
-        todayProgressText =
-            $"Today -> Calories: {FormatDifference(todayProgress.CaloriesDifference, "kcal")} | Protein: {FormatDifference(todayProgress.ProteinDifference, "g")} | Carbs: {FormatDifference(todayProgress.CarbsDifference, "g")} | Fat: {FormatDifference(todayProgress.FatDifference, "g")}";
+        todayProgressRows = CreateMetricRows(
+            FormatDifference(todayProgress.CaloriesDifference, "kcal"),
+            FormatDifference(todayProgress.ProteinDifference, "g"),
+            FormatDifference(todayProgress.CarbsDifference, "g"),
+            FormatDifference(todayProgress.FatDifference, "g"));
     }
 
     private void LoadRangeStatistics(DateTime startDate, DateTime endDate)
@@ -163,6 +316,7 @@ else
         rangeRows = rangeSummary.DailyComparisons
             .Select(item => new RangeStatisticsGridItem
             {
+                SourceDate = item.Date,
                 Date = item.Date.ToString("dd-MM-yyyy", CultureInfo.InvariantCulture),
                 Calories = item.CaloriesConsumed,
                 Protein = item.ProteinConsumed,
@@ -171,21 +325,14 @@ else
                 Status = GetRangeStatusText(item),
             })
             .ToList();
-    }
 
-    private void GoToMain()
-    {
-        Navigation.NavigateTo("/main");
-    }
-
-    private void GoToLogin()
-    {
-        Navigation.NavigateTo("/");
+        selectedRangeDate = null;
     }
 
     private void OnSelectedDateChanged(ChangeEventArgs e)
     {
         selectedDateText = e.Value?.ToString() ?? DateTime.Today.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        selectedRangeDate = null;
     }
 
     private void OnStartDateChanged(ChangeEventArgs e)
@@ -201,6 +348,41 @@ else
     private static DateTime ParseDate(string value)
     {
         return DateTime.ParseExact(value, "yyyy-MM-dd", CultureInfo.InvariantCulture);
+    }
+
+    private void SelectRangeRow(RangeStatisticsGridItem item)
+    {
+        if (item is null)
+        {
+            return;
+        }
+
+        selectedRangeDate = item.SourceDate;
+        selectedDateText = item.SourceDate.ToString("yyyy-MM-dd", CultureInfo.InvariantCulture);
+        LoadDailyStatistics(item.SourceDate);
+    }
+
+    private string GetRangeRowClass(RangeStatisticsGridItem item)
+    {
+        return selectedRangeDate == item.SourceDate
+            ? "statistics-view-row statistics-view-row-selected"
+            : "statistics-view-row";
+    }
+
+    private static List<MetricRow> CreateMetricRows(string calories, string protein, string carbs, string fat)
+    {
+        return
+        [
+            new("Calories", calories),
+            new("Protein", protein),
+            new("Carbs", carbs),
+            new("Fat", fat),
+        ];
+    }
+
+    private static string FormatAmount(decimal value, string unit)
+    {
+        return $"{value:F2} {unit}";
     }
 
     private static string FormatDifference(decimal difference, string unit)
@@ -240,6 +422,8 @@ else
 
     private sealed class RangeStatisticsGridItem
     {
+        public DateTime SourceDate { get; set; }
+
         public string Date { get; set; } = string.Empty;
 
         public decimal Calories { get; set; }
@@ -253,15 +437,16 @@ else
         public string Status { get; set; } = string.Empty;
     }
 
+    private sealed record MetricRow(string Label, string Value);
+
     private async Task DownloadPdf()
     {
-        if (rangeSummary == null)
+        if (rangeSummary is null)
         {
             return;
         }
 
         var pdfBytes = PdfService.GenerateStatisticsPdf(rangeSummary);
-
         var base64 = Convert.ToBase64String(pdfBytes);
 
         await JS.InvokeVoidAsync("downloadFile", "statistics.pdf", base64);
