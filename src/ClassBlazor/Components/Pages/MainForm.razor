@@ -70,6 +70,14 @@ else
                             User Management
                         </button>
                     </li>
+                    <li>
+                        <button type="button" @onclick="GoToMostConsumedProduct" class="main-form-nav-link nav-link">
+                            <svg class="bi pe-none me-2" width="16" height="16" aria-hidden="true">
+                                <use xlink:href="#bar-chart"></use>
+                            </svg>
+                            Most Consumed Product
+                        </button>
+                    </li>
                 }
             </ul>
 
@@ -191,6 +199,11 @@ else
         return CurrentSection == section
             ? "main-form-nav-link nav-link active"
             : "main-form-nav-link nav-link";
+    }
+
+    private void GoToMostConsumedProduct()
+    {
+        Navigation.NavigateTo("/most-consumed");
     }
 
     private enum ViewSection
