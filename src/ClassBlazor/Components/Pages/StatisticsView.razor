@@ -1,5 +1,6 @@
 @page "/statistics"
-
+@inject PdfService PdfService
+@inject IJSRuntime JS
 @inject NavigationManager Navigation
 @inject SessionService SessionService
 @inject INutritionStatisticsController NutritionStatisticsController
@@ -69,7 +70,7 @@ else
             }
         </tbody>
     </table>
-
+    <button @onclick="DownloadPdf">Download PDF</button>
     <button @onclick="GoToMain">Back</button>
 }
 
@@ -88,6 +89,7 @@ else
     private string averageCaloriesText = "0.00 kcal";
     private string averageMacrosText = string.Empty;
     private List<RangeStatisticsGridItem> rangeRows = [];
+    private RangeNutritionSummary? rangeSummary;
 
     protected override void OnInitialized()
     {
@@ -148,7 +150,7 @@ else
 
     private void LoadRangeStatistics(DateTime startDate, DateTime endDate)
     {
-        var rangeSummary = NutritionStatisticsController.GetRangeSummary(SessionService.CurrentUser!, startDate, endDate);
+        rangeSummary = NutritionStatisticsController.GetRangeSummary(SessionService.CurrentUser!, startDate, endDate);
 
         daysWithMenusText = rangeSummary.DaysWithMenus.ToString(CultureInfo.InvariantCulture);
         daysGoalMetText = rangeSummary.DaysGoalMet.ToString(CultureInfo.InvariantCulture);
@@ -248,5 +250,19 @@ else
         public decimal Fat { get; set; }
 
         public string Status { get; set; } = string.Empty;
+    }
+
+    private async Task DownloadPdf()
+    {
+        if (rangeSummary == null)
+        {
+            return;
+        }
+
+        var pdfBytes = PdfService.GenerateStatisticsPdf(rangeSummary);
+
+        var base64 = Convert.ToBase64String(pdfBytes);
+
+        await JS.InvokeVoidAsync("downloadFile", "statistics.pdf", base64);
     }
 }

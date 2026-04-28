@@ -6,6 +6,9 @@ using ClassModels;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Add QuestPDF license (required for using the library in production)
+QuestPDF.Settings.License = QuestPDF.Infrastructure.LicenseType.Community;
+
 // Add services to the container.
 builder.Services.AddRazorComponents()
     .AddInteractiveServerComponents();
@@ -17,6 +20,7 @@ builder.Services.AddScoped<INutritionStatisticsController, NutritionStatisticsCo
 builder.Services.AddScoped<IUserController, UserController>();
 builder.Services.AddScoped<IProductController, ProductController>();
 builder.Services.AddScoped<IMenuController, MenuController>();
+builder.Services.AddScoped<PdfService>();
 
 builder.Services.AddScoped<IRepository<User>>(sp =>
     new UserRepository(Path.Combine(Directory.GetCurrentDirectory(), "..", "..", "data", "users.csv")));
