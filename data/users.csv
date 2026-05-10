@@ -1,14 +1,14 @@
 UserId,Name,Email,Password,Goal,ActivityLevel,WeightKg,HeightCm,Age,Sex,DietType,Role,IsActive
 1,Jose,jose@gmail.com,123,Maintain,Moderate,72,175,21,Male,Standard,Admin,True
-2,Andrea,andrea@gmail.com,2525,LoseFat,Light,65,165,22,Female,Vegetarian,User,True
+2,Andrea,andrea@gmail.com,2525,LoseFat,Light,65,165,22,Female,Vegetarian,User,False
 3,Carlos,carlos@gmail.com,1234,GainMass,High,80,178,24,Male,Keto,User,True
 4,Keylin,key@gmail.com,123,LoseFat,Light,70,170,25,Male,Standard,User,True
 5,Mariana,mariana@gmail.com,123,Maintain,Moderate,58,160,23,Female,Standard,User,True
 6,Daniel,daniel@gmail.com,123,GainMass,High,84,180,26,Male,Standard,User,True
-7,Sofia,sofia@gmail.com,123,LoseFat,Light,62,168,20,Female,Vegetarian,User,True
+7,Sofia,sofia@gmail.com,123,LoseFat,Light,62,168,20,Female,Vegetarian,User,False
 8,Kevin,kevin@gmail.com,123,Maintain,Sedentary,76,174,27,Male,Keto,User,True
 9,Valeria,valeria@gmail.com,123,LoseFat,Moderate,59,162,24,Female,Standard,User,True
-10,Anthony,anthony@gmail.com,123,GainMass,High,88,182,22,Male,Standard,User,True
+10,Anthony,anthony@gmail.com,123,GainMass,High,88,182,22,Male,Standard,User,False
 11,Paula,paula@gmail.com,123,Maintain,Light,61,164,28,Female,Vegetarian,User,True
 12,Brayan,brayan@gmail.com,123,LoseFat,Moderate,79,177,25,Male,Standard,User,True
 13,Lucia,lucia@gmail.com,123,Maintain,Moderate,57,158,21,Female,Keto,User,True
